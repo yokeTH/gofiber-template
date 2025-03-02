@@ -1,0 +1,27 @@
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/yokeTH/gofiber-template/internal/core/domain"
+	"github.com/yokeTH/gofiber-template/internal/database"
+	"github.com/yokeTH/gofiber-template/pkg/config"
+)
+
+func main() {
+	config := config.Load()
+
+	db, err := database.NewPostgresDB(config.PSQL)
+	if err != nil {
+		log.Fatalf("Database connection failed: %v", err)
+	}
+
+	if err := db.AutoMigrate(
+		&domain.Book{},
+	); err != nil {
+		log.Fatalf("Migration failed: %v", err)
+	}
+
+	fmt.Println("Migration completed")
+}
