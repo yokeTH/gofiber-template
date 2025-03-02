@@ -11,6 +11,6 @@ type Book struct {
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
-	Title     string         `json:"title"`
-	Author    string         `json:"author"`
+	Title     string         `json:"title,omitempty"`
+	Author    string         `json:"author,omitempty"`
 }

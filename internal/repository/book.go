@@ -39,10 +39,7 @@ func (r *BookRepository) GetBooks(limit int, page int) ([]*domain.Book, int, int
 }
 
 func (r *BookRepository) UpdateBook(id int, book *domain.Book) (*domain.Book, error) {
-	if err := r.db.First(book, id).Error; err != nil {
-		return nil, err
-	}
-	if err := r.db.Save(book).Error; err != nil {
+	if err := r.db.Where("id = ?", id).Updates(book).First(book, id).Error; err != nil {
 		return nil, err
 	}
 	return book, nil
