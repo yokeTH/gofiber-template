@@ -46,7 +46,9 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 }
 
 func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
-	books, err := h.BookService.GetBooks()
+	limit := c.QueryInt("limit", 10)
+	page := c.QueryInt("page", 1)
+	books, totalPage, totalRows, err := h.BookService.GetBooks(limit, page)
 	if err != nil {
 		return apperror.InternalServerError(err, err.Error())
 	}
@@ -55,7 +57,15 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 	for i, book := range books {
 		convertedBooks[i] = *book
 	}
-	return c.JSON(response.SuccessResponse[[]domain.Book]{Data: convertedBooks})
+	return c.JSON(response.PaginationResponse[domain.Book]{
+		Data: convertedBooks,
+		Pagination: response.Pagination{
+			CurrentPage: page,
+			LastPage:    totalPage,
+			Limit:       limit,
+			Total:       totalRows,
+		},
+	})
 }
 
 func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {

@@ -8,7 +8,7 @@ import (
 type BookService interface {
 	CreateBook(book *domain.Book) error
 	GetBook(id int) (*domain.Book, error)
-	GetBooks() ([]*domain.Book, error)
+	GetBooks(limit int, page int) ([]*domain.Book, int, int, error)
 	UpdateBook(id int, book *domain.Book) (*domain.Book, error)
 	DeleteBook(id int) error
 }
@@ -16,7 +16,7 @@ type BookService interface {
 type BookRepository interface {
 	CreateBook(book *domain.Book) error
 	GetBook(id int) (*domain.Book, error)
-	GetBooks() ([]*domain.Book, error)
+	GetBooks(limit int, page int) ([]*domain.Book, int, int, error)
 	UpdateBook(id int, book *domain.Book) (*domain.Book, error)
 	DeleteBook(id int) error
 }

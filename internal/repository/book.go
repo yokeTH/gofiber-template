@@ -28,12 +28,14 @@ func (r *BookRepository) GetBook(id int) (*domain.Book, error) {
 	return book, nil
 }
 
-func (r *BookRepository) GetBooks() ([]*domain.Book, error) {
+func (r *BookRepository) GetBooks(limit int, page int) ([]*domain.Book, int, int, error) {
 	var books []*domain.Book
-	if err := r.db.Find(&books).Error; err != nil {
-		return nil, err
+
+	totalPage, totalRows, err := r.db.Paginate(&books, limit, page, "id asc")
+	if err != nil {
+		return nil, 0, 0, err
 	}
-	return books, nil
+	return books, totalPage, totalRows, nil
 }
 
 func (r *BookRepository) UpdateBook(id int, book *domain.Book) (*domain.Book, error) {

@@ -23,8 +23,8 @@ func (s *BookService) GetBook(id int) (*domain.Book, error) {
 	return s.BookRepository.GetBook(id)
 }
 
-func (s *BookService) GetBooks() ([]*domain.Book, error) {
-	return s.BookRepository.GetBooks()
+func (s *BookService) GetBooks(limit int, page int) ([]*domain.Book, int, int, error) {
+	return s.BookRepository.GetBooks(limit, page)
 }
 
 func (s *BookService) UpdateBook(id int, book *domain.Book) (*domain.Book, error) {
