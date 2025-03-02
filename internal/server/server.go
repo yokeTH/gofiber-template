@@ -99,7 +99,9 @@ func New(opts ...ServerOption) *Server {
 	app.Use(healthcheck.New(healthcheck.Config{
 		LivenessEndpoint: "/health",
 		LivenessProbe: func(c *fiber.Ctx) bool {
-			c.JSON(fiber.Map{"status": "ok"})
+			if err := c.JSON(fiber.Map{"status": "ok"}); err != nil {
+				return false
+			}
 			return true
 		},
 	}))
@@ -119,7 +121,7 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 
 	defer func() {
 		if err := s.Shutdown(); err != nil {
-			log.Printf("failed to shutdown server: %v", err)
+			log.Printf("failed to shutdown server: %v.", err)
 		}
 	}()
 
