@@ -9,8 +9,8 @@ import (
 )
 
 type Config struct {
-	Server   server.Config   `envPrefix:"SERVER_"`
-	Database database.Config `envPrefix:"POSTGRES_"`
+	Server server.Config           `envPrefix:"SERVER_"`
+	PSQL   database.PostgresConfig `envPrefix:"POSTGRES_"`
 }
 
 func Load() *Config {
