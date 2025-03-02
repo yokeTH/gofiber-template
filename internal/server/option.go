@@ -2,6 +2,13 @@ package server
 
 type ServerOption func(*Server)
 
+// WithName sets a custom name for the server
+func WithName(name string) ServerOption {
+	return func(s *Server) {
+		s.config.Name = name
+	}
+}
+
 // WithPort sets a custom port for the server
 func WithPort(port int) ServerOption {
 	return func(s *Server) {
