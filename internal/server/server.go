@@ -33,7 +33,7 @@ const defaultCorsAllowHeaders = "Origin,Content-Type,Accept,Authorization"
 const defaultCorsAllowCredentials = false
 
 type Server struct {
-	app    *fiber.App
+	*fiber.App
 	config *Config
 }
 
@@ -104,25 +104,21 @@ func New(opts ...ServerOption) *Server {
 		},
 	}))
 
-	server.app = app
+	server.App = app
 
 	return server
 }
 
-func (s *Server) Use(middleware ...fiber.Handler) {
-	s.app.Use(middleware)
-}
-
 func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 	go func() {
-		if err := s.app.Listen(fmt.Sprintf(":%d", s.config.Port)); err != nil {
+		if err := s.Listen(fmt.Sprintf(":%d", s.config.Port)); err != nil {
 			log.Fatalf("failed to start server: %v", err)
 			stop()
 		}
 	}()
 
 	defer func() {
-		if err := s.app.Shutdown(); err != nil {
+		if err := s.Shutdown(); err != nil {
 			log.Printf("failed to shutdown server: %v", err)
 		}
 	}()
@@ -130,48 +126,4 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 	<-ctx.Done()
 
 	log.Println("shutting down server...")
-}
-
-func (s *Server) Get(path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.Get(path, handlers...)
-}
-
-func (s *Server) Head(path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.Head(path, handlers...)
-}
-
-func (s *Server) Post(path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.Post(path, handlers...)
-}
-
-func (s *Server) Put(path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.Put(path, handlers...)
-}
-
-func (s *Server) Delete(path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.Delete(path, handlers...)
-}
-
-func (s *Server) Connect(path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.Connect(path, handlers...)
-}
-
-func (s *Server) Options(path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.Options(path, handlers...)
-}
-
-func (s *Server) Trace(path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.Trace(path, handlers...)
-}
-
-func (s *Server) Patch(path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.Patch(path, handlers...)
-}
-
-func (s *Server) Add(method, path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.Add(path, path, handlers...)
-}
-
-func (s *Server) All(path string, handlers ...fiber.Handler) fiber.Router {
-	return s.app.All(path, handlers...)
 }
