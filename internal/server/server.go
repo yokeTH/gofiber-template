@@ -131,3 +131,47 @@ func (s *Server) Start(ctx context.Context, stop context.CancelFunc) {
 
 	log.Println("shutting down server...")
 }
+
+func (s *Server) Get(path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.Get(path, handlers...)
+}
+
+func (s *Server) Head(path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.Head(path, handlers...)
+}
+
+func (s *Server) Post(path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.Post(path, handlers...)
+}
+
+func (s *Server) Put(path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.Put(path, handlers...)
+}
+
+func (s *Server) Delete(path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.Delete(path, handlers...)
+}
+
+func (s *Server) Connect(path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.Connect(path, handlers...)
+}
+
+func (s *Server) Options(path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.Options(path, handlers...)
+}
+
+func (s *Server) Trace(path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.Trace(path, handlers...)
+}
+
+func (s *Server) Patch(path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.Patch(path, handlers...)
+}
+
+func (s *Server) Add(method, path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.Add(path, path, handlers...)
+}
+
+func (s *Server) All(path string, handlers ...fiber.Handler) fiber.Router {
+	return s.app.All(path, handlers...)
+}

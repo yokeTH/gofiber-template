@@ -1,6 +1,9 @@
 package port
 
-import "github.com/yokeTH/gofiber-template/internal/core/domain"
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/yokeTH/gofiber-template/internal/core/domain"
+)
 
 type BookService interface {
 	CreateBook(book *domain.Book) error
@@ -16,4 +19,12 @@ type BookRepository interface {
 	GetBooks() ([]*domain.Book, error)
 	UpdateBook(id int, book *domain.Book) (*domain.Book, error)
 	DeleteBook(id int) error
+}
+
+type BookHandler interface {
+	CreateBook(c *fiber.Ctx) error
+	GetBook(c *fiber.Ctx) error
+	GetBooks(c *fiber.Ctx) error
+	UpdateBook(c *fiber.Ctx) error
+	DeleteBook(c *fiber.Ctx) error
 }

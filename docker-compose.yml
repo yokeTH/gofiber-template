@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+  pgadmin:
+    image: dpage/pgadmin4:8
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./.pgadmin_config/config_local.py:/pgadmin4/config_local.py
+    depends_on:
+      - db
+
+  redis:
+    image: redis:6.2
+    restart: always
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgadmin_data:

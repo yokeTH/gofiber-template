@@ -3,14 +3,14 @@ package repository
 import (
 	"github.com/yokeTH/gofiber-template/internal/core/domain"
 	"github.com/yokeTH/gofiber-template/internal/core/port"
-	"gorm.io/gorm"
+	"github.com/yokeTH/gofiber-template/internal/database"
 )
 
 type BookRepository struct {
-	db *gorm.DB
+	db *database.Database
 }
 
-func NewBookRepository(db *gorm.DB) port.BookRepository {
+func NewBookRepository(db *database.Database) port.BookRepository {
 	return &BookRepository{
 		db: db,
 	}
