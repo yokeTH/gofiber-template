@@ -7,6 +7,7 @@ import (
 
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
+	"github.com/yokeTH/gofiber-template/pkg/apperror"
 )
 
 type Config struct {
@@ -76,6 +77,7 @@ func New(opts ...ServerOption) *Server {
 		JSONEncoder:           json.Marshal,
 		JSONDecoder:           json.Unmarshal,
 		DisableStartupMessage: true,
+		ErrorHandler:          apperror.ErrorHandler,
 	})
 
 	server.app = app
