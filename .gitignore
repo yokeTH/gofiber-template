@@ -26,6 +26,6 @@ go.work.sum
 !.env.example
 
 # bin
-./bin/
+bin/
 
 .DS_Store
