@@ -31,7 +31,7 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "create book service failed")
 	}
 
-	return c.JSON(response.SuccessResponse[domain.Book]{Data: *body})
+	return c.Status(fiber.StatusCreated).JSON(response.SuccessResponse[domain.Book]{Data: *body})
 }
 
 func (h *BookHandler) GetBook(c *fiber.Ctx) error {
