@@ -25,7 +25,10 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 	}
 
 	if err := h.BookService.CreateBook(body); err != nil {
-		return apperror.InternalServerError(err, err.Error())
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "create book service failed")
 	}
 
 	return c.JSON(response.SuccessResponse[domain.Book]{Data: *body})
@@ -39,7 +42,10 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 
 	book, err := h.BookService.GetBook(id)
 	if err != nil {
-		return apperror.InternalServerError(err, err.Error())
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get book service failed")
 	}
 
 	return c.JSON(response.SuccessResponse[domain.Book]{Data: *book})
@@ -50,7 +56,10 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 	page := c.QueryInt("page", 1)
 	books, totalPage, totalRows, err := h.BookService.GetBooks(limit, page)
 	if err != nil {
-		return apperror.InternalServerError(err, err.Error())
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "get books service failed")
 	}
 
 	convertedBooks := make([]domain.Book, len(books))
@@ -81,7 +90,10 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 
 	book, err := h.BookService.UpdateBook(id, body)
 	if err != nil {
-		return apperror.InternalServerError(err, err.Error())
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "update book service failed")
 	}
 
 	return c.JSON(response.SuccessResponse[domain.Book]{Data: *book})
@@ -94,7 +106,10 @@ func (h *BookHandler) DeleteBook(c *fiber.Ctx) error {
 	}
 
 	if err := h.BookService.DeleteBook(id); err != nil {
-		return apperror.InternalServerError(err, err.Error())
+		if apperror.IsAppError(err) {
+			return err
+		}
+		return apperror.InternalServerError(err, "delete book service failed")
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)
