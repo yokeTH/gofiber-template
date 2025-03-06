@@ -65,6 +65,6 @@ func (s *R2Storage) GetSignedUrl(ctx context.Context, key string, expires time.D
 	return req.URL, nil
 }
 
-func (s *R2Storage) GetPublicUrl(ctx context.Context, key string) string {
+func (s *R2Storage) GetPublicUrl(key string) string {
 	return fmt.Sprintf(s.config.UrlFormat, key)
 }

@@ -17,5 +17,5 @@ type Storage struct {
 type IStorage interface {
 	UploadFile(ctx context.Context, key string, contentType string, file io.Reader) error
 	GetSignedUrl(ctx context.Context, key string, expires time.Duration) (string, error)
-	GetPublicUrl(ctx context.Context, key string) string
+	GetPublicUrl(key string) string
 }
