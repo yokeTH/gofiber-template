@@ -68,3 +68,12 @@ func (s *R2Storage) GetSignedUrl(ctx context.Context, key string, expires time.D
 func (s *R2Storage) GetPublicUrl(key string) string {
 	return fmt.Sprintf(s.config.UrlFormat, key)
 }
+
+func (s *R2Storage) DeleteFile(ctx context.Context, key string) error {
+	_, err := s.DeleteObject(ctx, &s3.DeleteObjectInput{
+		Bucket: aws.String(s.BucketName),
+		Key:    aws.String(key),
+	})
+
+	return err
+}
