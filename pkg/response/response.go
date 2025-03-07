@@ -19,3 +19,11 @@ type Pagination struct {
 	Limit       int `json:"limit"`
 	Total       int `json:"total"`
 }
+
+func Success[T any](data T) SuccessResponse[T] {
+	return SuccessResponse[T]{Data: data}
+}
+
+func SuccessPagination[T any](data []T, pagination Pagination) PaginationResponse[T] {
+	return PaginationResponse[T]{Data: data, Pagination: pagination}
+}
