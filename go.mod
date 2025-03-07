@@ -13,7 +13,6 @@ require (
 	github.com/gofiber/swagger v1.1.1
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.10.0
-	github.com/swaggo/swag v1.16.4
 	github.com/swaggo/swag/v2 v2.0.0-rc4
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/driver/sqlite v1.5.7
@@ -62,6 +61,7 @@ require (
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/sv-tools/openapi v0.2.1 // indirect
 	github.com/swaggo/files/v2 v2.0.2 // indirect
+	github.com/swaggo/swag v1.16.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect

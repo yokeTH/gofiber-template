@@ -5,8 +5,7 @@ import (
 	"log"
 
 	"github.com/gofiber/swagger"
-	"github.com/swaggo/swag"
-	"github.com/yokeTH/gofiber-template/docs"
+	_ "github.com/yokeTH/gofiber-template/docs"
 	"github.com/yokeTH/gofiber-template/internal/core/service"
 	"github.com/yokeTH/gofiber-template/internal/database"
 	"github.com/yokeTH/gofiber-template/internal/handler"
@@ -43,7 +42,6 @@ func main() {
 		server.WithPort(config.Server.Port),
 	)
 
-	swag.Register(docs.SwaggerInfo.InfoInstanceName, docs.SwaggerInfo)
 	s.Get("/swagger/*", swagger.HandlerDefault)
 
 	s.Get("/books", bookHandler.GetBooks)
