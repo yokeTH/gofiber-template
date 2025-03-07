@@ -11,7 +11,7 @@ type BookResponse struct {
 	Author string `json:"author"`
 }
 
-type UpdateBook struct {
+type UpdateBookRequest struct {
 	Title  string `json:"title,omitempty"`
 	Author string `json:"author,omitempty"`
 }
