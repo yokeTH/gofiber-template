@@ -140,7 +140,7 @@ paths:
       - book
   /books/{id}:
     delete:
-      description: update book data
+      description: delete book by id
       parameters:
       - description: Book ID
         in: path
@@ -163,7 +163,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/dto.ErrorResponse'
           description: Internal Server Error
-      summary: UpdateBook
+      summary: DeleteBook
       tags:
       - book
     get:
