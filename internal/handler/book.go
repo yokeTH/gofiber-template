@@ -88,7 +88,7 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 		Title:  book.Title,
 	}
 
-	return c.JSON(dto.Success(dto.BookResponse(res)))
+	return c.JSON(dto.Success(res))
 }
 
 // GetBooks godoc
@@ -167,8 +167,8 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 }
 
 // DeleteBook godoc
-// @summary UpdateBook
-// @description update book data
+// @summary DeleteBook
+// @description delete book by id
 // @tags book
 // @produce json
 // @Param id path int true "Book ID"
