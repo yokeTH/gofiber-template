@@ -17,7 +17,7 @@ import (
 
 // @title GO-FIBER-TEMPLATE API
 // @version 1.0
-// @schemes https http
+// @servers https http
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
