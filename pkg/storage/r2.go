@@ -25,7 +25,7 @@ type R2Storage struct {
 	config R2Config
 }
 
-func NewR2Storage(r2Config R2Config) IStorage {
+func NewR2Storage(r2Config R2Config) (IStorage, error) {
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(r2Config.AccessKeyID, r2Config.AccessKeySecret, "")),
 		config.WithRegion("auto"),
@@ -33,16 +33,16 @@ func NewR2Storage(r2Config R2Config) IStorage {
 	)
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	client := s3.NewFromConfig(cfg)
 	presignClient := s3.NewPresignClient(client)
-	return &R2Storage{&Storage{presignClient, client, r2Config.BucketName}, r2Config}
+	return &R2Storage{&Storage{presignClient, client, r2Config.BucketName}, r2Config}, nil
 }
 
 func (s *R2Storage) UploadFile(ctx context.Context, key string, contentType string, file io.Reader) error {
-	_, err := s.PresignPutObject(ctx, &s3.PutObjectInput{
+	_, err := s.Client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:      aws.String(s.BucketName),
 		Key:         aws.String(key),
 		ContentType: aws.String(contentType),
