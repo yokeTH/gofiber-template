@@ -1,20 +1,27 @@
 components:
   schemas:
-    apperror.AppError:
-      properties:
-        code:
-          type: integer
-        err: {}
-        message:
-          type: string
-      type: object
-    domain.Book:
+    dto.BookResponse:
       properties:
         author:
           type: string
         id:
           type: integer
         title:
+          type: string
+      type: object
+    dto.CreateBookRequest:
+      properties:
+        author:
+          type: string
+        title:
+          type: string
+      required:
+      - author
+      - title
+      type: object
+    dto.ErrorResponse:
+      properties:
+        error:
           type: string
       type: object
     dto.Pagination:
@@ -28,20 +35,27 @@ components:
         total:
           type: integer
       type: object
-    dto.PaginationResponse-domain_Book:
+    dto.PaginationResponse-dto_BookResponse:
       properties:
         data:
           items:
-            $ref: '#/components/schemas/domain.Book'
+            $ref: '#/components/schemas/dto.BookResponse'
           type: array
           uniqueItems: false
         pagination:
           $ref: '#/components/schemas/dto.Pagination'
       type: object
-    dto.SuccessResponse-domain_Book:
+    dto.SuccessResponse-dto_BookResponse:
       properties:
         data:
-          $ref: '#/components/schemas/domain.Book'
+          $ref: '#/components/schemas/dto.BookResponse'
+      type: object
+    dto.UpdateBookRequest:
+      properties:
+        author:
+          type: string
+        title:
+          type: string
       type: object
   securitySchemes:
     Bearer:
@@ -76,19 +90,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.PaginationResponse-domain_Book'
+                $ref: '#/components/schemas/dto.PaginationResponse-dto_BookResponse'
           description: OK
         "400":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apperror.AppError'
+                $ref: '#/components/schemas/dto.ErrorResponse'
           description: Bad Request
         "500":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apperror.AppError'
+                $ref: '#/components/schemas/dto.ErrorResponse'
           description: Internal Server Error
       summary: GetBooks
       tags:
@@ -99,7 +113,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/domain.Book'
+              $ref: '#/components/schemas/dto.CreateBookRequest'
         description: Book Data
         required: true
       responses:
@@ -107,19 +121,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_Book'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_BookResponse'
           description: Created
         "400":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apperror.AppError'
+                $ref: '#/components/schemas/dto.ErrorResponse'
           description: Bad Request
         "500":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apperror.AppError'
+                $ref: '#/components/schemas/dto.ErrorResponse'
           description: Internal Server Error
       summary: CreateBook
       tags:
@@ -135,23 +149,19 @@ paths:
         schema:
           type: integer
       responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_Book'
-          description: OK
+        "204":
+          description: No Content
         "400":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apperror.AppError'
+                $ref: '#/components/schemas/dto.ErrorResponse'
           description: Bad Request
         "500":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apperror.AppError'
+                $ref: '#/components/schemas/dto.ErrorResponse'
           description: Internal Server Error
       summary: UpdateBook
       tags:
@@ -170,19 +180,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_Book'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_BookResponse'
           description: OK
         "400":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apperror.AppError'
+                $ref: '#/components/schemas/dto.ErrorResponse'
           description: Bad Request
         "500":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apperror.AppError'
+                $ref: '#/components/schemas/dto.ErrorResponse'
           description: Internal Server Error
       summary: GetBook
       tags:
@@ -200,7 +210,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/domain.Book'
+              $ref: '#/components/schemas/dto.UpdateBookRequest'
         description: Book Data
         required: true
       responses:
@@ -208,19 +218,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dto.SuccessResponse-domain_Book'
+                $ref: '#/components/schemas/dto.SuccessResponse-dto_BookResponse'
           description: OK
         "400":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apperror.AppError'
+                $ref: '#/components/schemas/dto.ErrorResponse'
           description: Bad Request
         "500":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/apperror.AppError'
+                $ref: '#/components/schemas/dto.ErrorResponse'
           description: Internal Server Error
       summary: UpdateBook
       tags:
