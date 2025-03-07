@@ -5,7 +5,7 @@ import (
 	"github.com/yokeTH/gofiber-template/internal/core/domain"
 	"github.com/yokeTH/gofiber-template/internal/core/port"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
-	"github.com/yokeTH/gofiber-template/pkg/response"
+	"github.com/yokeTH/gofiber-template/pkg/dto"
 )
 
 type BookHandler struct {
@@ -31,7 +31,7 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "create book service failed")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(response.Success(*body))
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(*body))
 }
 
 func (h *BookHandler) GetBook(c *fiber.Ctx) error {
@@ -48,7 +48,7 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get book service failed")
 	}
 
-	return c.JSON(response.Success(*book))
+	return c.JSON(dto.Success(*book))
 }
 
 func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
@@ -66,7 +66,7 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 	for i, book := range books {
 		convertedBooks[i] = *book
 	}
-	return c.JSON(response.SuccessPagination(convertedBooks, page, totalPage, limit, totalRows))
+	return c.JSON(dto.SuccessPagination(convertedBooks, page, totalPage, limit, totalRows))
 }
 
 func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
@@ -88,7 +88,7 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update book service failed")
 	}
 
-	return c.JSON(response.Success(*book))
+	return c.JSON(dto.Success(*book))
 }
 
 func (h *BookHandler) DeleteBook(c *fiber.Ctx) error {
