@@ -7,6 +7,7 @@ import (
 	"github.com/yokeTH/gofiber-template/internal/core/port"
 	"github.com/yokeTH/gofiber-template/internal/database"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
+	"github.com/yokeTH/gofiber-template/pkg/dto"
 	"gorm.io/gorm"
 )
 
@@ -51,14 +52,20 @@ func (r *BookRepository) GetBooks(limit int, page int) ([]*domain.Book, int, int
 	return books, totalPage, totalRows, nil
 }
 
-func (r *BookRepository) UpdateBook(id int, book *domain.Book) (*domain.Book, error) {
-	if err := r.db.Where("id = ?", id).Updates(book).First(book, id).Error; err != nil {
+func (r *BookRepository) UpdateBook(id int, updateRequest *dto.UpdateBookRequest) (*domain.Book, error) {
+	var book domain.Book
+	if err := r.db.First(&book, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, apperror.NotFoundError(err, "book not found")
 		}
 		return nil, err
 	}
-	return book, nil
+
+	if err := r.db.Model(&book).Updates(updateRequest).Error; err != nil {
+		return nil, err
+	}
+
+	return &book, nil
 }
 
 func (r *BookRepository) DeleteBook(id int) error {

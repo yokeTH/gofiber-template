@@ -4,6 +4,8 @@ import (
 	"context"
 	"log"
 
+	"github.com/gofiber/swagger"
+	_ "github.com/yokeTH/gofiber-template/docs"
 	"github.com/yokeTH/gofiber-template/internal/core/service"
 	"github.com/yokeTH/gofiber-template/internal/database"
 	"github.com/yokeTH/gofiber-template/internal/handler"
@@ -12,6 +14,13 @@ import (
 	"github.com/yokeTH/gofiber-template/pkg/config"
 )
 
+// @title GO-FIBER-TEMPLATE API
+// @version 1.0
+// @servers https http
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Bearer token authentication
 func main() {
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
@@ -32,6 +41,8 @@ func main() {
 		server.WithBodyLimitMB(config.Server.BodyLimitMB),
 		server.WithPort(config.Server.Port),
 	)
+
+	s.Get("/swagger/*", swagger.HandlerDefault)
 
 	s.Get("/books", bookHandler.GetBooks)
 	s.Get("/books/:id", bookHandler.GetBook)

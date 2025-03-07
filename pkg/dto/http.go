@@ -1,4 +1,4 @@
-package response
+package dto
 
 type ErrorResponse struct {
 	Error string `json:"error"`
@@ -18,4 +18,19 @@ type Pagination struct {
 	LastPage    int `json:"last_page"`
 	Limit       int `json:"limit"`
 	Total       int `json:"total"`
+}
+
+func Success[T any](data T) SuccessResponse[T] {
+	return SuccessResponse[T]{Data: data}
+}
+
+func SuccessPagination[T any](data []T, currentPage int, lastPage int, limit int, total int) PaginationResponse[T] {
+	return PaginationResponse[T]{
+		Data: data,
+		Pagination: Pagination{
+			CurrentPage: currentPage,
+			LastPage:    lastPage,
+			Limit:       limit,
+			Total:       total,
+		}}
 }
