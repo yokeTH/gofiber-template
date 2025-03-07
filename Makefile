@@ -17,7 +17,7 @@ deps:
 	go mod tidy
 
 gen-docs:
-	swag init -v3.1 -o docs -g cmd/server/main.go
+	swag init -v3.1 -o docs -g cmd/server/main.go --parseDependency --parseInternal
 
 lint:
 	golangci-lint run
