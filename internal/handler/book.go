@@ -28,8 +28,8 @@ func NewBookHandler(bookService port.BookService) port.BookHandler {
 // @produce json
 // @param Book body dto.CreateBookRequest true "Book Data"
 // @response 201 {object} dto.SuccessResponse[dto.BookResponse] "Created"
-// @response 400 {object} apperror.AppError "Bad Request"
-// @response 500 {object} apperror.AppError "Internal Server Error"
+// @response 400 {object} dto.ErrorResponse "Bad Request"
+// @response 500 {object} dto.ErrorResponse "Internal Server Error"
 // @Router /books [post]
 func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 	body := new(dto.CreateBookRequest)
@@ -65,8 +65,8 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 // @produce json
 // @Param id path int true "Book ID"
 // @response 200 {object} dto.SuccessResponse[dto.BookResponse] "OK"
-// @response 400 {object} apperror.AppError "Bad Request"
-// @response 500 {object} apperror.AppError "Internal Server Error"
+// @response 400 {object} dto.ErrorResponse "Bad Request"
+// @response 500 {object} dto.ErrorResponse "Internal Server Error"
 // @Router /books/{id} [get]
 func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -98,9 +98,9 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 // @produce json
 // @Param limit query int false "Number of history to be retrieved"
 // @Param page query int false "Page to retrieved"
-// @response 200 {object} dto.PaginationResponse[domain.Book] "OK"
-// @response 400 {object} apperror.AppError "Bad Request"
-// @response 500 {object} apperror.AppError "Internal Server Error"
+// @response 200 {object} dto.PaginationResponse[dto.BookResponse] "OK"
+// @response 400 {object} dto.ErrorResponse "Bad Request"
+// @response 500 {object} dto.ErrorResponse "Internal Server Error"
 // @Router /books [get]
 func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 10)
@@ -135,8 +135,8 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 // @Param id path int true "Book ID"
 // @param Book body dto.UpdateBookRequest true "Book Data"
 // @response 200 {object} dto.SuccessResponse[dto.BookResponse] "OK"
-// @response 400 {object} apperror.AppError "Bad Request"
-// @response 500 {object} apperror.AppError "Internal Server Error"
+// @response 400 {object} dto.ErrorResponse "Bad Request"
+// @response 500 {object} dto.ErrorResponse "Internal Server Error"
 // @Router /books/{id} [patch]
 func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -173,8 +173,8 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 // @produce json
 // @Param id path int true "Book ID"
 // @response 204 "No Content"
-// @response 400 {object} apperror.AppError "Bad Request"
-// @response 500 {object} apperror.AppError "Internal Server Error"
+// @response 400 {object} dto.ErrorResponse "Bad Request"
+// @response 500 {object} dto.ErrorResponse "Internal Server Error"
 // @Router /books/{id} [delete]
 func (h *BookHandler) DeleteBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
