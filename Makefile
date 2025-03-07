@@ -4,7 +4,7 @@ build:
 run:
 	go run ./cmd/server/main.go
 
-watch:
+dev:
 	air
 
 migrate:
@@ -15,3 +15,11 @@ clean:
 
 deps:
 	go mod tidy
+
+gen-docs:
+	swag init -v3.1 -o docs -g cmd/server/main.go
+
+lint:
+	golangci-lint run
+
+.DEFAULT_GOAL = run
