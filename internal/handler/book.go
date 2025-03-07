@@ -14,6 +14,7 @@ type BookHandler struct {
 	BookService port.BookService
 }
 
+// NewBookHandler creates a new BookHandler instance using the provided BookService. It returns an implementation of port.BookHandler for handling HTTP requests related to book management.
 func NewBookHandler(bookService port.BookService) port.BookHandler {
 	return &BookHandler{
 		BookService: bookService,

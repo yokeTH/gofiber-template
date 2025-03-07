@@ -63,6 +63,10 @@ func UnprocessableEntityError(err error, msg string) *AppError {
 	return New(fiber.StatusUnprocessableEntity, msg, err)
 }
 
+// ErrorHandler sends a JSON error response to the client based on the error type.
+// If the error is an AppError, it uses the associated HTTP status code and message.
+// For other errors, it either uses the status code from a fiber.Error or defaults to 500.
+// If sending the JSON response fails, it responds with a plain text "Internal Server Error".
 func ErrorHandler(c *fiber.Ctx, err error) error {
 
 	// if is app error

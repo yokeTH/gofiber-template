@@ -5,7 +5,8 @@ import (
 	"log"
 
 	"github.com/gofiber/swagger"
-	_ "github.com/yokeTH/gofiber-template/docs"
+	"github.com/swaggo/swag"
+	"github.com/yokeTH/gofiber-template/docs"
 	"github.com/yokeTH/gofiber-template/internal/core/service"
 	"github.com/yokeTH/gofiber-template/internal/database"
 	"github.com/yokeTH/gofiber-template/internal/handler"
@@ -20,7 +21,7 @@ import (
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
-// @description Bearer token authentication
+// main initializes and starts the book management web server. It loads configuration settings, establishes a PostgreSQL database connection, and sets up the repository, service, and handler layers for book operations. The function registers HTTP routes for creating, retrieving, updating, and deleting books, as well as a route for serving Swagger UI documentation, and starts the server with a context that supports graceful shutdown.
 func main() {
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
@@ -42,6 +43,7 @@ func main() {
 		server.WithPort(config.Server.Port),
 	)
 
+	swag.Register(docs.SwaggerInfo.InfoInstanceName, docs.SwaggerInfo)
 	s.Get("/swagger/*", swagger.HandlerDefault)
 
 	s.Get("/books", bookHandler.GetBooks)

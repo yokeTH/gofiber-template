@@ -24,6 +24,7 @@ var SwaggerInfo = &swag.Spec{
 	RightDelim:       "}}",
 }
 
+// init registers the Swagger specification with the swag package using SwaggerInfo's instance name, enabling the API's auto-generated documentation to be served.
 func init() {
 	swag.Register(SwaggerInfo.InstanceName(), SwaggerInfo)
 }
