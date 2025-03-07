@@ -31,7 +31,7 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "create book service failed")
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(response.SuccessResponse[domain.Book]{Data: *body})
+	return c.Status(fiber.StatusCreated).JSON(response.Success(*body))
 }
 
 func (h *BookHandler) GetBook(c *fiber.Ctx) error {
@@ -48,7 +48,7 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get book service failed")
 	}
 
-	return c.JSON(response.SuccessResponse[domain.Book]{Data: *book})
+	return c.JSON(response.Success(*book))
 }
 
 func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
@@ -66,15 +66,7 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 	for i, book := range books {
 		convertedBooks[i] = *book
 	}
-	return c.JSON(response.PaginationResponse[domain.Book]{
-		Data: convertedBooks,
-		Pagination: response.Pagination{
-			CurrentPage: page,
-			LastPage:    totalPage,
-			Limit:       limit,
-			Total:       totalRows,
-		},
-	})
+	return c.JSON(response.SuccessPagination(convertedBooks, page, totalPage, limit, totalRows))
 }
 
 func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
@@ -96,7 +88,7 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update book service failed")
 	}
 
-	return c.JSON(response.SuccessResponse[domain.Book]{Data: *book})
+	return c.JSON(response.Success(*book))
 }
 
 func (h *BookHandler) DeleteBook(c *fiber.Ctx) error {
