@@ -32,6 +32,11 @@ func New(config DBConfig) (*gorm.DB, error) {
 	return db, nil
 }
 
+// Pagination use with gorm.DB.Scopes() to calculate total pages and last page
+//
+// Usage Example:
+//
+//	db.Scopes(database.Paginate(domain.Book{}, limit, page, total, last)).Find(&books)
 func Paginate(model any, limit, page, total, last *int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		var totalRows int64
