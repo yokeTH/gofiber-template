@@ -2,9 +2,11 @@ package apperror
 
 import (
 	"errors"
+	"fmt"
+	"runtime"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/yokeTH/gofiber-template/pkg/dto"
 )
 
@@ -12,14 +14,11 @@ type AppError struct {
 	Code    int
 	Message string
 	Err     error
+	Stack   string
 }
 
 func (e *AppError) Error() string {
-	if e.Err != nil {
-		return e.Err.Error()
-	}
-	log.Warnf("your error is nil. passed message: %s", e.Message)
-	return e.Message
+	return fmt.Sprintf("%s\nError: %v \nStack:\n%s", e.Message, e.Err, e.Stack)
 }
 
 func IsAppError(err error) bool {
@@ -28,11 +27,35 @@ func IsAppError(err error) bool {
 }
 
 func New(code int, message string, err error) *AppError {
+	stack := captureStack()
 	return &AppError{
 		Code:    code,
 		Message: message,
 		Err:     err,
+		Stack:   stack,
 	}
+}
+
+// modified https://github.com/pkg/errors/blob/5dd12d0cfe7f152f80558d591504ce685299311e/stack.go
+func captureStack() string {
+	const depth = 32
+	var pcs [depth]uintptr
+
+	// skip 4 frames apperror.captureStack x2, apperror.New, apperror.InternalServerError or another
+	n := runtime.Callers(4, pcs[:])
+
+	if n == 0 {
+		return "stack trace is not available"
+	}
+
+	stackTrace := make([]string, 0, n)
+	for i := range n {
+		fn := runtime.FuncForPC(pcs[i])
+		file, line := fn.FileLine(pcs[i])
+		stackTrace = append(stackTrace, fmt.Sprintf("%s\n\tat %s:%d", fn.Name(), file, line))
+	}
+
+	return strings.Join(stackTrace, "\n")
 }
 
 func InternalServerError(err error, msg string) *AppError {
