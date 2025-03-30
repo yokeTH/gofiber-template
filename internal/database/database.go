@@ -32,12 +32,22 @@ func New(config DBConfig) (*gorm.DB, error) {
 	return db, nil
 }
 
-func Paginate(limit, page, total, last *int) func(db *gorm.DB) *gorm.DB {
+func Paginate(model any, limit, page, total, last *int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		var totalRows int64
+
+		// create new gorm session for count row
+		// idk why i have to do that
+		// i just followed this https://stackoverflow.com/questions/72666748
+		countDBSession := db.Session(&gorm.Session{Initialized: true})
+		countDBSession.Model(model).Count(&totalRows)
+
+		// db.Model(&domain.Book{}).Count(&totalRows)
+
 		*total = int(totalRows)
 		offset := (*page - 1) * *limit
 		*last = int(math.Ceil(float64(totalRows) / float64(*limit)))
-		return db.Count(&totalRows).Offset(offset).Limit(*limit)
+
+		return db.Offset(offset).Limit(*limit)
 	}
 }
