@@ -24,13 +24,13 @@ func (s *BookService) GetBook(id int) (*domain.Book, error) {
 	return s.BookRepository.GetBook(id)
 }
 
-func (s *BookService) GetBooks(limit int, page int) ([]*domain.Book, int, int, error) {
+func (s *BookService) GetBooks(limit int, page int) ([]domain.Book, int, int, error) {
 	var total, last int
 	books, err := s.BookRepository.GetBooks(&limit, &page, &total, &last)
 	if err != nil {
 		return nil, 0, 0, err
 	}
-	return books, total, last, nil
+	return books, last, total, nil
 }
 
 func (s *BookService) UpdateBook(id int, book *dto.UpdateBookRequest) (*domain.Book, error) {

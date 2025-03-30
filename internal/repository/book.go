@@ -38,10 +38,10 @@ func (r *BookRepository) GetBook(id int) (*domain.Book, error) {
 	return book, nil
 }
 
-func (r *BookRepository) GetBooks(limit, page, total, last *int) ([]*domain.Book, error) {
-	var books []*domain.Book
+func (r *BookRepository) GetBooks(limit, page, total, last *int) ([]domain.Book, error) {
+	var books []domain.Book
 
-	if err := r.db.Scopes(database.Paginate(limit, page, total, last)).Find(&books).Error; err != nil {
+	if err := r.db.Scopes(database.Paginate(domain.Book{}, limit, page, total, last)).Find(&books).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, apperror.NotFoundError(err, "books not found")
 		}

@@ -12,7 +12,7 @@ import (
 func main() {
 	config := config.Load()
 
-	db, err := database.NewPostgresDB(config.PSQL)
+	db, err := database.New(config.PSQL)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}

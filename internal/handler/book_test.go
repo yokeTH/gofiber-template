@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/yokeTH/gofiber-template/internal/core/domain"
 	"github.com/yokeTH/gofiber-template/internal/core/service"
-	"github.com/yokeTH/gofiber-template/internal/database"
 	"github.com/yokeTH/gofiber-template/internal/handler"
 	"github.com/yokeTH/gofiber-template/internal/repository"
 	"github.com/yokeTH/gofiber-template/internal/server"
@@ -103,7 +102,7 @@ func TestBook(t *testing.T) {
 	err = db.AutoMigrate(&domain.Book{})
 	assert.Nil(t, err)
 
-	bookRepository := repository.NewBookRepository(&database.Database{DB: db})
+	bookRepository := repository.NewBookRepository(db)
 	bookService := service.NewBookService(bookRepository)
 	bookHandler := handler.NewBookHandler(bookService)
 
