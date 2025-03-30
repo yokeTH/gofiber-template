@@ -8,7 +8,7 @@ import (
 	"github.com/swaggo/swag"
 	"github.com/yokeTH/gofiber-template/docs"
 	"github.com/yokeTH/gofiber-template/internal/core/service"
-	"github.com/yokeTH/gofiber-template/internal/database"
+	"github.com/yokeTH/gofiber-template/internal/db"
 	"github.com/yokeTH/gofiber-template/internal/handler"
 	"github.com/yokeTH/gofiber-template/internal/repository"
 	"github.com/yokeTH/gofiber-template/internal/server"
@@ -28,7 +28,7 @@ func main() {
 
 	config := config.Load()
 
-	db, err := database.New(config.PSQL)
+	db, err := db.New(config.PSQL)
 	if err != nil {
 		log.Fatalf("failed to connect database: %v", err)
 	}

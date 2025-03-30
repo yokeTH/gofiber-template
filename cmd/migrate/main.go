@@ -5,14 +5,14 @@ import (
 	"log"
 
 	"github.com/yokeTH/gofiber-template/internal/core/domain"
-	"github.com/yokeTH/gofiber-template/internal/database"
+	"github.com/yokeTH/gofiber-template/internal/db"
 	"github.com/yokeTH/gofiber-template/pkg/config"
 )
 
 func main() {
 	config := config.Load()
 
-	db, err := database.New(config.PSQL)
+	db, err := db.New(config.PSQL)
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}

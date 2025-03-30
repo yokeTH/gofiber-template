@@ -143,13 +143,13 @@ swagger comment docs example:
 
 #### Pagination
 
-Here is an example of how to use `database.Pagination` in your repository:
+Here is an example of how to use `db.Pagination` in your repository:
 
 ```go
 func (r *BookRepository) GetBooks(limit, page, total, last *int) ([]domain.Book, error) {
     var books []domain.Book
 
-    if err := r.db.Scopes(database.Paginate(domain.Book{}, limit, page, total, last)).Find(&books).Error; err != nil {
+    if err := r.db.Scopes(db.Paginate(domain.Book{}, limit, page, total, last)).Find(&books).Error; err != nil {
         if errors.Is(err, gorm.ErrRecordNotFound) {
             return nil, apperror.NotFoundError(err, "books not found")
         }

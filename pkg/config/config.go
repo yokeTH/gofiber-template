@@ -4,15 +4,15 @@ import (
 	"github.com/caarlos0/env/v11"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/joho/godotenv"
-	"github.com/yokeTH/gofiber-template/internal/database"
+	"github.com/yokeTH/gofiber-template/internal/db"
 	"github.com/yokeTH/gofiber-template/internal/server"
 	"github.com/yokeTH/gofiber-template/pkg/storage"
 )
 
 type Config struct {
-	Server server.Config     `envPrefix:"SERVER_"`
-	PSQL   database.DBConfig `envPrefix:"POSTGRES_"`
-	R2     storage.R2Config  `envPrefix:"R2_"`
+	Server server.Config    `envPrefix:"SERVER_"`
+	PSQL   db.DBConfig      `envPrefix:"POSTGRES_"`
+	R2     storage.R2Config `envPrefix:"R2_"`
 }
 
 func Load() *Config {

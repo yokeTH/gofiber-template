@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/yokeTH/gofiber-template/internal/core/domain"
-	"github.com/yokeTH/gofiber-template/internal/database"
+	"github.com/yokeTH/gofiber-template/internal/db"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
 	"github.com/yokeTH/gofiber-template/pkg/dto"
 	"gorm.io/gorm"
@@ -41,7 +41,7 @@ func (r *BookRepository) GetBook(id int) (*domain.Book, error) {
 func (r *BookRepository) GetBooks(limit, page, total, last *int) ([]domain.Book, error) {
 	var books []domain.Book
 
-	if err := r.db.Scopes(database.Paginate(domain.Book{}, limit, page, total, last)).Find(&books).Error; err != nil {
+	if err := r.db.Scopes(db.Paginate(domain.Book{}, limit, page, total, last)).Find(&books).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, apperror.NotFoundError(err, "books not found")
 		}
