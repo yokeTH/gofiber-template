@@ -17,7 +17,7 @@ type BookService interface {
 type BookRepository interface {
 	CreateBook(book *domain.Book) error
 	GetBook(id int) (*domain.Book, error)
-	GetBooks(limit int, page int) ([]*domain.Book, int, int, error)
+	GetBooks(limit, page, total, last *int) ([]*domain.Book, error)
 	UpdateBook(id int, book *dto.UpdateBookRequest) (*domain.Book, error)
 	DeleteBook(id int) error
 }

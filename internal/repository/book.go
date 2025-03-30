@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/yokeTH/gofiber-template/internal/core/domain"
-	"github.com/yokeTH/gofiber-template/internal/core/port"
 	"github.com/yokeTH/gofiber-template/internal/database"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
 	"github.com/yokeTH/gofiber-template/pkg/dto"
@@ -12,10 +11,10 @@ import (
 )
 
 type BookRepository struct {
-	db *database.Database
+	db *gorm.DB
 }
 
-func NewBookRepository(db *database.Database) port.BookRepository {
+func NewBookRepository(db *gorm.DB) *BookRepository {
 	return &BookRepository{
 		db: db,
 	}
@@ -39,17 +38,16 @@ func (r *BookRepository) GetBook(id int) (*domain.Book, error) {
 	return book, nil
 }
 
-func (r *BookRepository) GetBooks(limit int, page int) ([]*domain.Book, int, int, error) {
+func (r *BookRepository) GetBooks(limit, page, total, last *int) ([]*domain.Book, error) {
 	var books []*domain.Book
 
-	totalPage, totalRows, err := r.db.Paginate(&books, limit, page, "id asc")
-	if err != nil {
+	if err := r.db.Scopes(database.Paginate(limit, page, total, last)).Find(&books).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, 0, 0, apperror.NotFoundError(err, "books not found")
+			return nil, apperror.NotFoundError(err, "books not found")
 		}
-		return nil, 0, 0, apperror.InternalServerError(err, "failed to get books")
+		return nil, apperror.InternalServerError(err, "failed to get books")
 	}
-	return books, totalPage, totalRows, nil
+	return books, nil
 }
 
 func (r *BookRepository) UpdateBook(id int, updateRequest *dto.UpdateBookRequest) (*domain.Book, error) {
