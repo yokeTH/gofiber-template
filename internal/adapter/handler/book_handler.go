@@ -4,19 +4,21 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/yokeTH/gofiber-template/internal/core/domain"
-	"github.com/yokeTH/gofiber-template/internal/core/port"
+	"github.com/yokeTH/gofiber-template/internal/adapter/presenter"
+	"github.com/yokeTH/gofiber-template/internal/domain"
+	"github.com/yokeTH/gofiber-template/internal/usecase/book"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
-	"github.com/yokeTH/gofiber-template/pkg/dto"
 )
 
 type BookHandler struct {
-	BookService port.BookService
+	bookUseCase book.BookUseCase
+	presenter   *presenter.BookPresenter
 }
 
-func NewBookHandler(bookService port.BookService) port.BookHandler {
+func NewBookHandler(bookUseCase book.BookUseCase) *BookHandler {
 	return &BookHandler{
-		BookService: bookService,
+		bookUseCase: bookUseCase,
+		presenter:   presenter.NewBookPresenter(),
 	}
 }
 
@@ -26,13 +28,13 @@ func NewBookHandler(bookService port.BookService) port.BookHandler {
 // @tags book
 // @accept json
 // @produce json
-// @param Book body dto.CreateBookRequest true "Book Data"
-// @response 201 {object} dto.SuccessResponse[dto.BookResponse] "Created"
-// @response 400 {object} dto.ErrorResponse "Bad Request"
-// @response 500 {object} dto.ErrorResponse "Internal Server Error"
+// @param Book body presenter.CreateBookRequest true "Book Data"
+// @response 201 {object} presenter.SuccessResponse[presenter.BookResponse] "Created"
+// @response 400 {object} presenter.ErrorResponse "Bad Request"
+// @response 500 {object} presenter.ErrorResponse "Internal Server Error"
 // @Router /books [post]
 func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
-	body := new(dto.CreateBookRequest)
+	body := new(presenter.CreateBookRequest)
 	if err := c.BodyParser(body); err != nil {
 		return apperror.BadRequestError(err, err.Error())
 	}
@@ -42,20 +44,15 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 		Title:  body.Title,
 	}
 
-	if err := h.BookService.CreateBook(book); err != nil {
+	if err := h.bookUseCase.Create(book); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
 		return apperror.InternalServerError(err, "create book service failed")
 	}
 
-	res := dto.BookResponse{
-		ID:     book.ID,
-		Author: book.Author,
-		Title:  book.Title,
-	}
-
-	return c.Status(fiber.StatusCreated).JSON(dto.Success(res))
+	res := h.presenter.ToResponse(book)
+	return c.Status(fiber.StatusCreated).JSON(presenter.Success(res))
 }
 
 // GetBook godoc
@@ -64,9 +61,9 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 // @tags book
 // @produce json
 // @Param id path int true "Book ID"
-// @response 200 {object} dto.SuccessResponse[dto.BookResponse] "OK"
-// @response 400 {object} dto.ErrorResponse "Bad Request"
-// @response 500 {object} dto.ErrorResponse "Internal Server Error"
+// @response 200 {object} presenter.SuccessResponse[presenter.BookResponse] "OK"
+// @response 400 {object} presenter.ErrorResponse "Bad Request"
+// @response 500 {object} presenter.ErrorResponse "Internal Server Error"
 // @Router /books/{id} [get]
 func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -74,7 +71,7 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "id must be an integer")
 	}
 
-	book, err := h.BookService.GetBook(id)
+	book, err := h.bookUseCase.GetByID(id)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -82,13 +79,8 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get book service failed")
 	}
 
-	res := dto.BookResponse{
-		ID:     book.ID,
-		Author: book.Author,
-		Title:  book.Title,
-	}
-
-	return c.JSON(dto.Success(res))
+	res := h.presenter.ToResponse(book)
+	return c.JSON(presenter.Success(res))
 }
 
 // GetBooks godoc
@@ -98,9 +90,9 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 // @produce json
 // @Param limit query int false "Number of history to be retrieved"
 // @Param page query int false "Page to retrieved"
-// @response 200 {object} dto.PaginationResponse[dto.BookResponse] "OK"
-// @response 400 {object} dto.ErrorResponse "Bad Request"
-// @response 500 {object} dto.ErrorResponse "Internal Server Error"
+// @response 200 {object} presenter.PaginationResponse[presenter.BookResponse] "OK"
+// @response 400 {object} presenter.ErrorResponse "Bad Request"
+// @response 500 {object} presenter.ErrorResponse "Internal Server Error"
 // @Router /books [get]
 func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 10)
@@ -108,7 +100,8 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 		return apperror.BadRequestError(errors.New("limit cannot exceed 50"), "limit cannot exceed 50")
 	}
 	page := c.QueryInt("page", 1)
-	books, totalPage, totalRows, err := h.BookService.GetBooks(limit, page)
+
+	books, totalPage, totalRows, err := h.bookUseCase.List(limit, page)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -116,15 +109,8 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get books service failed")
 	}
 
-	convertedBooks := make([]dto.BookResponse, len(books))
-	for i, book := range books {
-		convertedBooks[i] = dto.BookResponse{
-			ID:     book.ID,
-			Author: book.Author,
-			Title:  book.Title,
-		}
-	}
-	return c.JSON(dto.SuccessPagination(convertedBooks, page, totalPage, limit, totalRows))
+	convertedBooks := h.presenter.ToResponseList(books)
+	return c.JSON(presenter.SuccessPagination(convertedBooks, page, totalPage, limit, totalRows))
 }
 
 // UpdateBook godoc
@@ -133,10 +119,10 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 // @tags book
 // @produce json
 // @Param id path int true "Book ID"
-// @param Book body dto.UpdateBookRequest true "Book Data"
-// @response 200 {object} dto.SuccessResponse[dto.BookResponse] "OK"
-// @response 400 {object} dto.ErrorResponse "Bad Request"
-// @response 500 {object} dto.ErrorResponse "Internal Server Error"
+// @param Book body presenter.UpdateBookRequest true "Book Data"
+// @response 200 {object} presenter.SuccessResponse[presenter.BookResponse] "OK"
+// @response 400 {object} presenter.ErrorResponse "Bad Request"
+// @response 500 {object} presenter.ErrorResponse "Internal Server Error"
 // @Router /books/{id} [patch]
 func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -144,12 +130,12 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "id must be an integer")
 	}
 
-	body := new(dto.UpdateBookRequest)
+	body := new(presenter.UpdateBookRequest)
 	if err := c.BodyParser(body); err != nil {
 		return apperror.BadRequestError(err, err.Error())
 	}
 
-	book, err := h.BookService.UpdateBook(id, body)
+	book, err := h.bookUseCase.Update(id, body)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -157,13 +143,8 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update book service failed")
 	}
 
-	res := dto.BookResponse{
-		ID:     book.ID,
-		Author: book.Author,
-		Title:  book.Title,
-	}
-
-	return c.JSON(dto.Success(res))
+	res := h.presenter.ToResponse(book)
+	return c.JSON(presenter.Success(res))
 }
 
 // DeleteBook godoc
@@ -173,8 +154,8 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 // @produce json
 // @Param id path int true "Book ID"
 // @response 204 "No Content"
-// @response 400 {object} dto.ErrorResponse "Bad Request"
-// @response 500 {object} dto.ErrorResponse "Internal Server Error"
+// @response 400 {object} presenter.ErrorResponse "Bad Request"
+// @response 500 {object} presenter.ErrorResponse "Internal Server Error"
 // @Router /books/{id} [delete]
 func (h *BookHandler) DeleteBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -182,7 +163,7 @@ func (h *BookHandler) DeleteBook(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "id must be an integer")
 	}
 
-	if err := h.BookService.DeleteBook(id); err != nil {
+	if err := h.bookUseCase.Delete(id); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}

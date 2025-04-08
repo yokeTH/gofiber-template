@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/yokeTH/gofiber-template/internal/core/domain"
-	"github.com/yokeTH/gofiber-template/internal/db"
-	"github.com/yokeTH/gofiber-template/pkg/config"
+	"github.com/yokeTH/gofiber-template/internal/config"
+	"github.com/yokeTH/gofiber-template/internal/domain"
+	"github.com/yokeTH/gofiber-template/internal/infrastructure/db"
 )
 
 func main() {

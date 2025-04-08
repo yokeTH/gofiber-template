@@ -7,12 +7,12 @@ import (
 	"github.com/gofiber/swagger"
 	"github.com/swaggo/swag"
 	"github.com/yokeTH/gofiber-template/docs"
-	"github.com/yokeTH/gofiber-template/internal/core/service"
-	"github.com/yokeTH/gofiber-template/internal/db"
-	"github.com/yokeTH/gofiber-template/internal/handler"
-	"github.com/yokeTH/gofiber-template/internal/repository"
-	"github.com/yokeTH/gofiber-template/internal/server"
-	"github.com/yokeTH/gofiber-template/pkg/config"
+	"github.com/yokeTH/gofiber-template/internal/adapter/handler"
+	"github.com/yokeTH/gofiber-template/internal/adapter/repository"
+	"github.com/yokeTH/gofiber-template/internal/config"
+	"github.com/yokeTH/gofiber-template/internal/infrastructure/db"
+	"github.com/yokeTH/gofiber-template/internal/infrastructure/server"
+	"github.com/yokeTH/gofiber-template/internal/usecase/book"
 )
 
 // @title GO-FIBER-TEMPLATE API
@@ -28,21 +28,29 @@ func main() {
 
 	config := config.Load()
 
+	// Setup infrastructure
 	db, err := db.New(config.PSQL)
 	if err != nil {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
-	bookRepository := repository.NewBookRepository(db)
-	bookService := service.NewBookService(bookRepository)
-	bookHandler := handler.NewBookHandler(bookService)
+	// Setup repository
+	bookRepo := repository.NewBookRepository(db)
 
+	// Setup use cases
+	bookUC := book.NewBookUseCase(bookRepo)
+
+	// Setup handlers
+	bookHandler := handler.NewBookHandler(bookUC)
+
+	// Setup server
 	s := server.New(
 		server.WithName(config.Server.Name),
 		server.WithBodyLimitMB(config.Server.BodyLimitMB),
 		server.WithPort(config.Server.Port),
 	)
 
+	// Setup routes
 	swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
 	s.Get("/swagger/*", swagger.HandlerDefault)
 
@@ -52,5 +60,6 @@ func main() {
 	s.Patch("/books/:id", bookHandler.UpdateBook)
 	s.Delete("/books/:id", bookHandler.DeleteBook)
 
+	// Start the server
 	s.Start(ctx, stop)
 }
