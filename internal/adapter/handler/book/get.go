@@ -5,21 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/yokeTH/gofiber-template/internal/adapter/presenter"
-	"github.com/yokeTH/gofiber-template/internal/usecase/book"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
 )
-
-type BookHandler struct {
-	bookUseCase book.BookUseCase
-	presenter   *presenter.BookPresenter
-}
-
-func NewBookHandler(bookUseCase book.BookUseCase) *BookHandler {
-	return &BookHandler{
-		bookUseCase: bookUseCase,
-		presenter:   presenter.NewBookPresenter(),
-	}
-}
 
 // GetBook godoc
 // @summary GetBook
