@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/yokeTH/gofiber-template/internal/server"
+	"github.com/yokeTH/gofiber-template/internal/infrastructure/server"
 )
 
 func TestServer(t *testing.T) {

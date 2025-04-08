@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/yokeTH/gofiber-template/pkg/dto"
+	"github.com/yokeTH/gofiber-template/internal/adapter/presenter"
 )
 
 type AppError struct {
@@ -91,7 +91,7 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 	// if is app error
 	if IsAppError(err) {
 		e := err.(*AppError)
-		if err := c.Status(e.Code).JSON(dto.ErrorResponse{Error: e.Message}); err != nil {
+		if err := c.Status(e.Code).JSON(presenter.ErrorResponse{Error: e.Message}); err != nil {
 			// if can't send error
 			return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 		}
@@ -104,7 +104,7 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 		code = e.Code
 	}
 
-	if err := c.Status(code).JSON(dto.ErrorResponse{Error: err.Error()}); err != nil {
+	if err := c.Status(code).JSON(presenter.ErrorResponse{Error: err.Error()}); err != nil {
 		// if can't send error
 		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 	}

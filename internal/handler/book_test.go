@@ -8,11 +8,12 @@ import (
 
 	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/assert"
-	"github.com/yokeTH/gofiber-template/internal/core/domain"
-	"github.com/yokeTH/gofiber-template/internal/core/service"
+
+	"github.com/yokeTH/gofiber-template/internal/adapter/repository"
+	"github.com/yokeTH/gofiber-template/internal/domain"
 	"github.com/yokeTH/gofiber-template/internal/handler"
-	"github.com/yokeTH/gofiber-template/internal/repository"
-	"github.com/yokeTH/gofiber-template/internal/server"
+	"github.com/yokeTH/gofiber-template/internal/infrastructure/server"
+	"github.com/yokeTH/gofiber-template/internal/usecase/book"
 	"github.com/yokeTH/gofiber-template/pkg/mock"
 )
 
@@ -102,9 +103,14 @@ func TestBook(t *testing.T) {
 	err = db.AutoMigrate(&domain.Book{})
 	assert.Nil(t, err)
 
-	bookRepository := repository.NewBookRepository(db)
-	bookService := service.NewBookService(bookRepository)
-	bookHandler := handler.NewBookHandler(bookService)
+	// Setup repository
+	bookRepo := repository.NewBookRepository(db)
+
+	// Setup use cases
+	bookUC := book.NewBookUseCase(bookRepo)
+
+	// Setup handlers
+	bookHandler := handler.NewBookHandler(bookUC)
 
 	s := server.New(
 		server.WithName("MOCK SERVER"),
