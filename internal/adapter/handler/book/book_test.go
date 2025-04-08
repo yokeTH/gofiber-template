@@ -9,9 +9,9 @@ import (
 	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/assert"
 
+	handler "github.com/yokeTH/gofiber-template/internal/adapter/handler/book"
 	"github.com/yokeTH/gofiber-template/internal/adapter/repository"
 	"github.com/yokeTH/gofiber-template/internal/domain"
-	"github.com/yokeTH/gofiber-template/internal/handler"
 	"github.com/yokeTH/gofiber-template/internal/infrastructure/server"
 	"github.com/yokeTH/gofiber-template/internal/usecase/book"
 	"github.com/yokeTH/gofiber-template/pkg/mock"

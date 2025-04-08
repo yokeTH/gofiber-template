@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/swagger"
 	"github.com/swaggo/swag"
 	"github.com/yokeTH/gofiber-template/docs"
-	"github.com/yokeTH/gofiber-template/internal/adapter/handler"
+	bookHandler "github.com/yokeTH/gofiber-template/internal/adapter/handler/book"
 	"github.com/yokeTH/gofiber-template/internal/adapter/repository"
 	"github.com/yokeTH/gofiber-template/internal/config"
 	"github.com/yokeTH/gofiber-template/internal/infrastructure/db"
@@ -41,7 +41,7 @@ func main() {
 	bookUC := book.NewBookUseCase(bookRepo)
 
 	// Setup handlers
-	bookHandler := handler.NewBookHandler(bookUC)
+	bookHandler := bookHandler.NewBookHandler(bookUC)
 
 	// Setup server
 	s := server.New(
