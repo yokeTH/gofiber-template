@@ -1,65 +1,27 @@
 package main
 
 import (
-	"context"
+	"fmt"
 	"log"
 
-	"github.com/gofiber/swagger"
-	"github.com/swaggo/swag"
-	"github.com/yokeTH/gofiber-template/docs"
-	"github.com/yokeTH/gofiber-template/internal/adapter/handler"
-	"github.com/yokeTH/gofiber-template/internal/adapter/repository"
 	"github.com/yokeTH/gofiber-template/internal/config"
+	"github.com/yokeTH/gofiber-template/internal/domain"
 	"github.com/yokeTH/gofiber-template/internal/infrastructure/db"
-	"github.com/yokeTH/gofiber-template/internal/infrastructure/server"
-	"github.com/yokeTH/gofiber-template/internal/usecase/book"
 )
 
-// @title GO-FIBER-TEMPLATE API
-// @version 1.0
-// @servers https http
-// @securityDefinitions.apikey Bearer
-// @in header
-// @name Authorization
-// @description Bearer token authentication
 func main() {
-	ctx, stop := context.WithCancel(context.Background())
-	defer stop()
-
 	config := config.Load()
 
-	// Setup infrastructure
 	db, err := db.New(config.PSQL)
 	if err != nil {
-		log.Fatalf("failed to connect database: %v", err)
+		log.Fatalf("Database connection failed: %v", err)
 	}
 
-	// Setup repository
-	bookRepo := repository.NewBookRepository(db)
+	if err := db.AutoMigrate(
+		&domain.Book{},
+	); err != nil {
+		log.Fatalf("Migration failed: %v", err)
+	}
 
-	// Setup use cases
-	bookUC := book.NewBookUseCase(bookRepo)
-
-	// Setup handlers
-	bookHandler := handler.NewBookHandler(bookUC)
-
-	// Setup server
-	s := server.New(
-		server.WithName(config.Server.Name),
-		server.WithBodyLimitMB(config.Server.BodyLimitMB),
-		server.WithPort(config.Server.Port),
-	)
-
-	// Setup routes
-	swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
-	s.Get("/swagger/*", swagger.HandlerDefault)
-
-	s.Get("/books", bookHandler.GetBooks)
-	s.Get("/books/:id", bookHandler.GetBook)
-	s.Post("/books", bookHandler.CreateBook)
-	s.Patch("/books/:id", bookHandler.UpdateBook)
-	s.Delete("/books/:id", bookHandler.DeleteBook)
-
-	// Start the server
-	s.Start(ctx, stop)
+	fmt.Println("Migration completed")
 }
