@@ -10,12 +10,12 @@ import (
 )
 
 type DBConfig struct {
-	Host     string `env:"HOST"`
-	Port     int    `env:"PORT"`
-	User     string `env:"USER"`
-	Password string `env:"PASSWORD"`
-	DBName   string `env:"NAME"`
-	SSLMode  string `env:"SSLMODE"`
+	Host     string `env:"HOST,required"`
+	Port     int    `env:"PORT,required"`
+	User     string `env:"USER,required"`
+	Password string `env:"PASSWORD,required"`
+	DBName   string `env:"NAME,required"`
+	SSLMode  string `env:"SSLMODE,required"`
 }
 
 func New(config DBConfig) (*gorm.DB, error) {

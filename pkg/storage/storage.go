@@ -12,10 +12,10 @@ import (
 )
 
 type Config struct {
-	BucketName      string `env:"BUCKET_NAME"`
-	AccessKeyID     string `env:"ACCESS_KEY_ID"`
-	AccessKeySecret string `env:"ACCESS_KEY_SECRET"`
-	Endpoint        string `env:"ENDPOINT"`
+	BucketName      string `env:"BUCKET_NAME,required"`
+	AccessKeyID     string `env:"ACCESS_KEY_ID,required"`
+	AccessKeySecret string `env:"ACCESS_KEY_SECRET,required"`
+	Endpoint        string `env:"ENDPOINT,required"`
 }
 
 type storage struct {
@@ -78,7 +78,7 @@ func (s *storage) GetSignedUrl(ctx context.Context, key string, expires time.Dur
 }
 
 func (s *storage) GetPublicUrl(key string) string {
-	return s.config.Endpoint + "/" + key
+	return s.config.Endpoint + "/" + s.config.BucketName + "/" + key
 }
 
 func (s *storage) DeleteFile(ctx context.Context, key string) error {

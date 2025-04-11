@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/goccy/go-json"
+	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -15,13 +15,13 @@ import (
 )
 
 type Config struct {
-	Name                 string `env:"NAME"`
-	Port                 int    `env:"PORT"`
-	BodyLimitMB          int    `env:"BODY_LIMIT_MB"`
-	CorsAllowOrigins     string `env:"CORS_ALLOW_ORIGINS"`
-	CorsAllowMethods     string `env:"CORS_ALLOW_METHODS"`
-	CorsAllowHeaders     string `env:"CORS_ALLOW_HEADERS"`
-	CorsAllowCredentials bool   `env:"CORS_ALLOW_CREDENTIALS"`
+	Name                 string `env:"NAME,required"`
+	Port                 int    `env:"PORT,required"`
+	BodyLimitMB          int    `env:"BODY_LIMIT_MB,required"`
+	CorsAllowOrigins     string `env:"CORS_ALLOW_ORIGINS,required"`
+	CorsAllowMethods     string `env:"CORS_ALLOW_METHODS,required"`
+	CorsAllowHeaders     string `env:"CORS_ALLOW_HEADERS,required"`
+	CorsAllowCredentials bool   `env:"CORS_ALLOW_CREDENTIALS,required"`
 }
 
 const defaultName = "app"
@@ -78,8 +78,8 @@ func New(opts ...ServerOption) *Server {
 		AppName:               server.config.Name,
 		BodyLimit:             server.config.BodyLimitMB * 1024 * 1024,
 		CaseSensitive:         true,
-		JSONEncoder:           json.Marshal,
-		JSONDecoder:           json.Unmarshal,
+		JSONEncoder:           sonic.Marshal,
+		JSONDecoder:           sonic.Unmarshal,
 		DisableStartupMessage: true,
 		ErrorHandler:          apperror.ErrorHandler,
 	})
