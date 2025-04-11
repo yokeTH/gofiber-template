@@ -3,10 +3,10 @@ package repository
 import (
 	"errors"
 
-	"github.com/yokeTH/gofiber-template/internal/adapter/presenter"
+	"github.com/yokeTH/gofiber-template/internal/adaptor/dto"
 	"github.com/yokeTH/gofiber-template/internal/domain"
-	"github.com/yokeTH/gofiber-template/internal/infrastructure/db"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
+	"github.com/yokeTH/gofiber-template/pkg/db"
 	"gorm.io/gorm"
 )
 
@@ -51,7 +51,7 @@ func (r *bookRepository) List(limit, page int) ([]domain.Book, int, int, error) 
 	return books, last, total, nil
 }
 
-func (r *bookRepository) Update(id int, updateRequest *presenter.UpdateBookRequest) (*domain.Book, error) {
+func (r *bookRepository) Update(id int, updateRequest *dto.UpdateBookRequest) (*domain.Book, error) {
 	var book domain.Book
 	if err := r.db.First(&book, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

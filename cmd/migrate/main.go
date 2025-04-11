@@ -6,7 +6,7 @@ import (
 
 	"github.com/yokeTH/gofiber-template/internal/config"
 	"github.com/yokeTH/gofiber-template/internal/domain"
-	"github.com/yokeTH/gofiber-template/internal/infrastructure/db"
+	"github.com/yokeTH/gofiber-template/pkg/db"
 )
 
 func main() {

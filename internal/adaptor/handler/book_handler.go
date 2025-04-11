@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/yokeTH/gofiber-template/internal/adapter/presenter"
+	"github.com/yokeTH/gofiber-template/internal/adaptor/dto"
 	"github.com/yokeTH/gofiber-template/internal/domain"
 	"github.com/yokeTH/gofiber-template/internal/usecase/book"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
@@ -12,13 +12,13 @@ import (
 
 type BookHandler struct {
 	bookUseCase book.BookUseCase
-	presenter   *presenter.BookPresenter
+	dto         *dto.BookPresenter
 }
 
 func NewBookHandler(bookUseCase book.BookUseCase) *BookHandler {
 	return &BookHandler{
 		bookUseCase: bookUseCase,
-		presenter:   presenter.NewBookPresenter(),
+		dto:         dto.NewBookDto(),
 	}
 }
 
@@ -28,13 +28,13 @@ func NewBookHandler(bookUseCase book.BookUseCase) *BookHandler {
 // @tags book
 // @accept json
 // @produce json
-// @param Book body presenter.CreateBookRequest true "Book Data"
-// @response 201 {object} presenter.SuccessResponse[presenter.BookResponse] "Created"
-// @response 400 {object} presenter.ErrorResponse "Bad Request"
-// @response 500 {object} presenter.ErrorResponse "Internal Server Error"
+// @param Book body dto.CreateBookRequest true "Book Data"
+// @response 201 {object} dto.SuccessResponse[dto.BookResponse] "Created"
+// @response 400 {object} dto.ErrorResponse "Bad Request"
+// @response 500 {object} dto.ErrorResponse "Internal Server Error"
 // @Router /books [post]
 func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
-	body := new(presenter.CreateBookRequest)
+	body := new(dto.CreateBookRequest)
 	if err := c.BodyParser(body); err != nil {
 		return apperror.BadRequestError(err, err.Error())
 	}
@@ -51,8 +51,8 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "create book service failed")
 	}
 
-	res := h.presenter.ToResponse(book)
-	return c.Status(fiber.StatusCreated).JSON(presenter.Success(res))
+	res := h.dto.ToResponse(book)
+	return c.Status(fiber.StatusCreated).JSON(dto.Success(res))
 }
 
 // GetBook godoc
@@ -61,9 +61,9 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 // @tags book
 // @produce json
 // @Param id path int true "Book ID"
-// @response 200 {object} presenter.SuccessResponse[presenter.BookResponse] "OK"
-// @response 400 {object} presenter.ErrorResponse "Bad Request"
-// @response 500 {object} presenter.ErrorResponse "Internal Server Error"
+// @response 200 {object} dto.SuccessResponse[dto.BookResponse] "OK"
+// @response 400 {object} dto.ErrorResponse "Bad Request"
+// @response 500 {object} dto.ErrorResponse "Internal Server Error"
 // @Router /books/{id} [get]
 func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -79,8 +79,8 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get book service failed")
 	}
 
-	res := h.presenter.ToResponse(book)
-	return c.JSON(presenter.Success(res))
+	res := h.dto.ToResponse(book)
+	return c.JSON(dto.Success(res))
 }
 
 // GetBooks godoc
@@ -90,9 +90,9 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 // @produce json
 // @Param limit query int false "Number of history to be retrieved"
 // @Param page query int false "Page to retrieved"
-// @response 200 {object} presenter.PaginationResponse[presenter.BookResponse] "OK"
-// @response 400 {object} presenter.ErrorResponse "Bad Request"
-// @response 500 {object} presenter.ErrorResponse "Internal Server Error"
+// @response 200 {object} dto.PaginationResponse[dto.BookResponse] "OK"
+// @response 400 {object} dto.ErrorResponse "Bad Request"
+// @response 500 {object} dto.ErrorResponse "Internal Server Error"
 // @Router /books [get]
 func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 10)
@@ -109,8 +109,8 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "get books service failed")
 	}
 
-	convertedBooks := h.presenter.ToResponseList(books)
-	return c.JSON(presenter.SuccessPagination(convertedBooks, page, totalPage, limit, totalRows))
+	convertedBooks := h.dto.ToResponseList(books)
+	return c.JSON(dto.SuccessPagination(convertedBooks, page, totalPage, limit, totalRows))
 }
 
 // UpdateBook godoc
@@ -119,10 +119,10 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 // @tags book
 // @produce json
 // @Param id path int true "Book ID"
-// @param Book body presenter.UpdateBookRequest true "Book Data"
-// @response 200 {object} presenter.SuccessResponse[presenter.BookResponse] "OK"
-// @response 400 {object} presenter.ErrorResponse "Bad Request"
-// @response 500 {object} presenter.ErrorResponse "Internal Server Error"
+// @param Book body dto.UpdateBookRequest true "Book Data"
+// @response 200 {object} dto.SuccessResponse[dto.BookResponse] "OK"
+// @response 400 {object} dto.ErrorResponse "Bad Request"
+// @response 500 {object} dto.ErrorResponse "Internal Server Error"
 // @Router /books/{id} [patch]
 func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
@@ -130,7 +130,7 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "id must be an integer")
 	}
 
-	body := new(presenter.UpdateBookRequest)
+	body := new(dto.UpdateBookRequest)
 	if err := c.BodyParser(body); err != nil {
 		return apperror.BadRequestError(err, err.Error())
 	}
@@ -143,8 +143,8 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 		return apperror.InternalServerError(err, "update book service failed")
 	}
 
-	res := h.presenter.ToResponse(book)
-	return c.JSON(presenter.Success(res))
+	res := h.dto.ToResponse(book)
+	return c.JSON(dto.Success(res))
 }
 
 // DeleteBook godoc
@@ -154,8 +154,8 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 // @produce json
 // @Param id path int true "Book ID"
 // @response 204 "No Content"
-// @response 400 {object} presenter.ErrorResponse "Bad Request"
-// @response 500 {object} presenter.ErrorResponse "Internal Server Error"
+// @response 400 {object} dto.ErrorResponse "Bad Request"
+// @response 500 {object} dto.ErrorResponse "Internal Server Error"
 // @Router /books/{id} [delete]
 func (h *BookHandler) DeleteBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")

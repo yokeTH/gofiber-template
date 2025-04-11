@@ -1,4 +1,4 @@
-package presenter
+package dto
 
 import (
 	"github.com/yokeTH/gofiber-template/internal/domain"
@@ -6,7 +6,7 @@ import (
 
 type BookPresenter struct{}
 
-func NewBookPresenter() *BookPresenter {
+func NewBookDto() *BookPresenter {
 	return &BookPresenter{}
 }
 

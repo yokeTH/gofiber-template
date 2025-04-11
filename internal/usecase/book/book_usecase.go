@@ -1,7 +1,7 @@
 package book
 
 import (
-	"github.com/yokeTH/gofiber-template/internal/adapter/presenter"
+	"github.com/yokeTH/gofiber-template/internal/adaptor/dto"
 	"github.com/yokeTH/gofiber-template/internal/domain"
 )
 
@@ -27,7 +27,7 @@ func (uc *bookUseCase) List(limit, page int) ([]domain.Book, int, int, error) {
 	return uc.bookRepo.List(limit, page)
 }
 
-func (uc *bookUseCase) Update(id int, bookUpdate *presenter.UpdateBookRequest) (*domain.Book, error) {
+func (uc *bookUseCase) Update(id int, bookUpdate *dto.UpdateBookRequest) (*domain.Book, error) {
 	return uc.bookRepo.Update(id, bookUpdate)
 }
 

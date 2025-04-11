@@ -7,12 +7,12 @@ import (
 	"github.com/gofiber/swagger"
 	"github.com/swaggo/swag"
 	"github.com/yokeTH/gofiber-template/docs"
-	"github.com/yokeTH/gofiber-template/internal/adapter/handler"
-	"github.com/yokeTH/gofiber-template/internal/adapter/repository"
+	"github.com/yokeTH/gofiber-template/internal/adaptor/handler"
+	"github.com/yokeTH/gofiber-template/internal/adaptor/repository"
 	"github.com/yokeTH/gofiber-template/internal/config"
-	"github.com/yokeTH/gofiber-template/internal/infrastructure/db"
-	"github.com/yokeTH/gofiber-template/internal/infrastructure/server"
+	"github.com/yokeTH/gofiber-template/internal/server"
 	"github.com/yokeTH/gofiber-template/internal/usecase/book"
+	"github.com/yokeTH/gofiber-template/pkg/db"
 )
 
 // @title GO-FIBER-TEMPLATE API
