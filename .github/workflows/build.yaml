@@ -81,4 +81,4 @@ jobs:
         run: |
           go install github.com/swaggo/swag/v2/cmd/swag@v2.0.0-rc4
           export PATH=$PATH:$(go env GOPATH)/bin
-          swag init -v3.1 -o docs -g cmd/server/main.go --parseDependency --parseInternal
+          swag init -v3.1 -o docs -g main.go --parseDependency --parseInternal
