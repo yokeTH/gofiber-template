@@ -10,13 +10,13 @@ import (
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
 )
 
-type BookHandler struct {
+type bookHandler struct {
 	bookUseCase book.BookUseCase
 	dto         *dto.BookDto
 }
 
-func NewBookHandler(bookUseCase book.BookUseCase) *BookHandler {
-	return &BookHandler{
+func NewBookHandler(bookUseCase book.BookUseCase) *bookHandler {
+	return &bookHandler{
 		bookUseCase: bookUseCase,
 		dto:         dto.NewBookDto(),
 	}
@@ -35,7 +35,7 @@ func NewBookHandler(bookUseCase book.BookUseCase) *BookHandler {
 //	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //
 // @Router /books [post]
-func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
+func (h *bookHandler) CreateBook(c *fiber.Ctx) error {
 	body := new(dto.CreateBookRequest)
 	if err := c.BodyParser(body); err != nil {
 		return apperror.BadRequestError(err, err.Error())
@@ -68,7 +68,7 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 //	@failure		400	{object}	dto.ErrorResponse	"Bad Request"
 //	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /books/{id} [get]
-func (h *BookHandler) GetBook(c *fiber.Ctx) error {
+func (h *bookHandler) GetBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return apperror.BadRequestError(err, "id must be an integer")
@@ -98,7 +98,7 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 //	@response		400	{object}	dto.ErrorResponse	"Bad Request"
 //	@response		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /books [get]
-func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
+func (h *bookHandler) GetBooks(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 10)
 	if limit > 50 {
 		return apperror.BadRequestError(errors.New("limit cannot exceed 50"), "limit cannot exceed 50")
@@ -129,7 +129,7 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 //	@response		400	{object}	dto.ErrorResponse	"Bad Request"
 //	@response		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /books/{id} [patch]
-func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
+func (h *bookHandler) UpdateBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return apperror.BadRequestError(err, "id must be an integer")
@@ -163,7 +163,7 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 //	@response		400	{object}	dto.ErrorResponse	"Bad Request"
 //	@response		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router			/books/{id} [delete]
-func (h *BookHandler) DeleteBook(c *fiber.Ctx) error {
+func (h *bookHandler) DeleteBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return apperror.BadRequestError(err, "id must be an integer")
