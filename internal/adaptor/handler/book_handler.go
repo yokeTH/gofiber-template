@@ -12,7 +12,7 @@ import (
 
 type bookHandler struct {
 	bookUseCase book.BookUseCase
-	dto         *dto.BookDto
+	dto         dto.BookDto
 }
 
 func NewBookHandler(bookUseCase book.BookUseCase) *bookHandler {
