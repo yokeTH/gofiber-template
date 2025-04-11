@@ -4,13 +4,18 @@ import (
 	"github.com/yokeTH/gofiber-template/internal/domain"
 )
 
-type BookPresenter struct{}
+type bookDto struct{}
 
-func NewBookDto() *BookPresenter {
-	return &BookPresenter{}
+type BookDto interface {
+	ToResponse(book *domain.Book) BookResponse
+	ToResponseList(books []domain.Book) []BookResponse
 }
 
-func (p *BookPresenter) ToResponse(book *domain.Book) BookResponse {
+func NewBookDto() *bookDto {
+	return &bookDto{}
+}
+
+func (p *bookDto) ToResponse(book *domain.Book) BookResponse {
 	return BookResponse{
 		ID:     book.ID,
 		Author: book.Author,
@@ -18,7 +23,7 @@ func (p *BookPresenter) ToResponse(book *domain.Book) BookResponse {
 	}
 }
 
-func (p *BookPresenter) ToResponseList(books []domain.Book) []BookResponse {
+func (p *bookDto) ToResponseList(books []domain.Book) []BookResponse {
 	response := make([]BookResponse, len(books))
 	for i, book := range books {
 		response[i] = p.ToResponse(&book)

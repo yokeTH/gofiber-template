@@ -1,5 +1,5 @@
 build:
-	go build -o bin/server ./cmd/server/main.go
+	go build -o bin/server
 
 run:
 	go run ./cmd/server/main.go
@@ -17,7 +17,7 @@ deps:
 	go mod tidy
 
 gen-docs:
-	swag init -v3.1 -o docs -g cmd/server/main.go --parseDependency --parseInternal
+	swag init -v3.1 -o docs -g main.go --parseDependency --parseInternal
 
 lint:
 	golangci-lint run
