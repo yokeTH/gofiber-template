@@ -30,3 +30,4 @@ bin/
 
 .DS_Store
 .commitlint/
+docs/

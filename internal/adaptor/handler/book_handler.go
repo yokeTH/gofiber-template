@@ -23,15 +23,17 @@ func NewBookHandler(bookUseCase book.BookUseCase) *BookHandler {
 }
 
 // CreateBook godoc
-// @summary CreateBook
-// @description create book by title and author
-// @tags book
-// @accept json
-// @produce json
-// @param Book body dto.CreateBookRequest true "Book Data"
-// @response 201 {object} dto.SuccessResponse[dto.BookResponse] "Created"
-// @response 400 {object} dto.ErrorResponse "Bad Request"
-// @response 500 {object} dto.ErrorResponse "Internal Server Error"
+//
+//	@summary		CreateBook
+//	@description	create book by title and author
+//	@tags			book
+//	@accept			json
+//	@produce 		json
+//	@param			Book	body	dto.CreateBookRequest	true	"Book Data"
+//	@success 		201	{object}	dto.SuccessResponse[dto.BookResponse]	"Created"
+//	@failure		400	{object}	dto.ErrorResponse	"Bad Request"
+//	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
+//
 // @Router /books [post]
 func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 	body := new(dto.CreateBookRequest)
@@ -56,15 +58,16 @@ func (h *BookHandler) CreateBook(c *fiber.Ctx) error {
 }
 
 // GetBook godoc
-// @summary GetBook
-// @description get book by id
-// @tags book
-// @produce json
-// @Param id path int true "Book ID"
-// @response 200 {object} dto.SuccessResponse[dto.BookResponse] "OK"
-// @response 400 {object} dto.ErrorResponse "Bad Request"
-// @response 500 {object} dto.ErrorResponse "Internal Server Error"
-// @Router /books/{id} [get]
+//
+//	@summary		GetBook
+//	@description	get book by id
+//	@tags			book
+//	@produce		json
+//	@Param			id	path	int	true	"Book ID"
+//	@success 		200	{object}	dto.SuccessResponse[dto.BookResponse]	"OK"
+//	@failure		400	{object}	dto.ErrorResponse	"Bad Request"
+//	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
+//	@Router /books/{id} [get]
 func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
@@ -84,16 +87,17 @@ func (h *BookHandler) GetBook(c *fiber.Ctx) error {
 }
 
 // GetBooks godoc
-// @summary GetBooks
-// @description get books
-// @tags book
-// @produce json
-// @Param limit query int false "Number of history to be retrieved"
-// @Param page query int false "Page to retrieved"
-// @response 200 {object} dto.PaginationResponse[dto.BookResponse] "OK"
-// @response 400 {object} dto.ErrorResponse "Bad Request"
-// @response 500 {object} dto.ErrorResponse "Internal Server Error"
-// @Router /books [get]
+//
+//	@summary		GetBooks
+//	@description	get books
+//	@tags			book
+//	@produce		json
+//	@Param			limit	query	int	false	"Number of history to be retrieved"
+//	@Param			page	query	int	false	"Page to retrieved"
+//	@response		200	{object}	dto.PaginationResponse[dto.BookResponse]	"OK"
+//	@response		400	{object}	dto.ErrorResponse	"Bad Request"
+//	@response		500	{object}	dto.ErrorResponse	"Internal Server Error"
+//	@Router /books [get]
 func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 	limit := c.QueryInt("limit", 10)
 	if limit > 50 {
@@ -114,16 +118,17 @@ func (h *BookHandler) GetBooks(c *fiber.Ctx) error {
 }
 
 // UpdateBook godoc
-// @summary UpdateBook
-// @description update book data
-// @tags book
-// @produce json
-// @Param id path int true "Book ID"
-// @param Book body dto.UpdateBookRequest true "Book Data"
-// @response 200 {object} dto.SuccessResponse[dto.BookResponse] "OK"
-// @response 400 {object} dto.ErrorResponse "Bad Request"
-// @response 500 {object} dto.ErrorResponse "Internal Server Error"
-// @Router /books/{id} [patch]
+//
+//	@summary 		UpdateBook
+//	@description	update book data
+//	@tags 			book
+//	@produce		json
+//	@Param 			id		path	int						true	"Book ID"
+//	@param 			Book	body	dto.UpdateBookRequest	true	"Book Data"
+//	@response 		200	{object}	dto.SuccessResponse[dto.BookResponse]	"OK"
+//	@response		400	{object}	dto.ErrorResponse	"Bad Request"
+//	@response		500	{object}	dto.ErrorResponse	"Internal Server Error"
+//	@Router /books/{id} [patch]
 func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
@@ -148,15 +153,16 @@ func (h *BookHandler) UpdateBook(c *fiber.Ctx) error {
 }
 
 // DeleteBook godoc
-// @summary DeleteBook
-// @description delete book by id
-// @tags book
-// @produce json
-// @Param id path int true "Book ID"
-// @response 204 "No Content"
-// @response 400 {object} dto.ErrorResponse "Bad Request"
-// @response 500 {object} dto.ErrorResponse "Internal Server Error"
-// @Router /books/{id} [delete]
+//
+//	@summary		DeleteBook
+//	@description	delete book by id
+//	@tags			book
+//	@produce		json
+//	@Param			id	path	int	true	"Book ID"
+//	@response		204	"No Content"
+//	@response		400	{object}	dto.ErrorResponse	"Bad Request"
+//	@response		500	{object}	dto.ErrorResponse	"Internal Server Error"
+//	@Router			/books/{id} [delete]
 func (h *BookHandler) DeleteBook(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
