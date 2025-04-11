@@ -32,21 +32,21 @@ func (f *fileDto) ToResponse(file domain.File) FileResponse {
 			return FileResponse{
 				Name:      file.Name,
 				Url:       "error",
-				CreatedAt: file.CreatedAt,
+				CreatedAt: &file.CreatedAt,
 			}
 		}
 
 		return FileResponse{
 			Name:      file.Name,
 			Url:       url,
-			CreatedAt: file.CreatedAt,
+			CreatedAt: &file.CreatedAt,
 		}
 
 	} else {
 		return FileResponse{
 			Name:      file.Name,
 			Url:       f.public.GetPublicUrl(file.Key),
-			CreatedAt: file.CreatedAt,
+			CreatedAt: &file.CreatedAt,
 		}
 	}
 }
@@ -63,8 +63,8 @@ func (f *fileDto) ToResponseList(files []domain.File) []FileResponse {
 }
 
 type FileResponse struct {
-	ID        int       `json:"id,omitzero"`
-	Name      string    `json:"name"`
-	Url       string    `json:"url,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitzero"`
+	ID        int        `json:"id"`
+	Name      string     `json:"name"`
+	Url       string     `json:"url,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
 }

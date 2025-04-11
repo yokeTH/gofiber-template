@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/bytedance/sonic"
+	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
@@ -91,8 +91,8 @@ func New(opts ...ServerOption) *Server {
 		AppName:               server.config.Name,
 		BodyLimit:             server.config.BodyLimitMB * 1024 * 1024,
 		CaseSensitive:         true,
-		JSONEncoder:           sonic.Marshal,
-		JSONDecoder:           sonic.Unmarshal,
+		JSONEncoder:           json.Marshal,
+		JSONDecoder:           json.Unmarshal,
 		DisableStartupMessage: true,
 		ErrorHandler:          apperror.ErrorHandler,
 	})
