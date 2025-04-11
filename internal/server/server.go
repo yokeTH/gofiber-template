@@ -15,15 +15,17 @@ import (
 )
 
 type Config struct {
-	Name                 string `env:"NAME,required"`
-	Port                 int    `env:"PORT,required"`
-	BodyLimitMB          int    `env:"BODY_LIMIT_MB,required"`
-	CorsAllowOrigins     string `env:"CORS_ALLOW_ORIGINS,required"`
-	CorsAllowMethods     string `env:"CORS_ALLOW_METHODS,required"`
-	CorsAllowHeaders     string `env:"CORS_ALLOW_HEADERS,required"`
-	CorsAllowCredentials bool   `env:"CORS_ALLOW_CREDENTIALS,required"`
+	Env                  string `env:"ENV"`
+	Name                 string `env:"NAME"`
+	Port                 int    `env:"PORT"`
+	BodyLimitMB          int    `env:"BODY_LIMIT_MB"`
+	CorsAllowOrigins     string `env:"CORS_ALLOW_ORIGINS"`
+	CorsAllowMethods     string `env:"CORS_ALLOW_METHODS"`
+	CorsAllowHeaders     string `env:"CORS_ALLOW_HEADERS"`
+	CorsAllowCredentials bool   `env:"CORS_ALLOW_CREDENTIALS"`
 }
 
+const defaultEnv = "unknown"
 const defaultName = "app"
 const defaultPort = 8080
 const defaultBodyLimitMB = 4
@@ -57,6 +59,7 @@ type Server struct {
 func New(opts ...ServerOption) *Server {
 
 	defaultConfig := &Config{
+		Env:                  defaultEnv,
 		Name:                 defaultName,
 		Port:                 defaultPort,
 		BodyLimitMB:          defaultBodyLimitMB,
