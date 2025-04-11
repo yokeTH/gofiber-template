@@ -12,7 +12,9 @@ import (
 	"github.com/yokeTH/gofiber-template/internal/config"
 	"github.com/yokeTH/gofiber-template/internal/server"
 	"github.com/yokeTH/gofiber-template/internal/usecase/book"
+	"github.com/yokeTH/gofiber-template/internal/usecase/file"
 	"github.com/yokeTH/gofiber-template/pkg/db"
+	"github.com/yokeTH/gofiber-template/pkg/storage"
 )
 
 // @title GO-FIBER-TEMPLATE API
@@ -34,14 +36,27 @@ func main() {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
+	publicBucket, err := storage.New(config.PublicBucket)
+	if err != nil {
+		log.Fatalf("failed to create public bucket instance: %v", err)
+	}
+
+	privateBucket, err := storage.New(config.PrivateBucket)
+	if err != nil {
+		log.Fatalf("failed to create private bucket instance: %v", err)
+	}
+
 	// Setup repository
 	bookRepo := repository.NewBookRepository(db)
+	fileRepo := repository.NewFileRepository(db)
 
 	// Setup use cases
 	bookUC := book.NewBookUseCase(bookRepo)
+	fileUC := file.NewFileUseCase(fileRepo, publicBucket, privateBucket)
 
 	// Setup handlers
 	bookHandler := handler.NewBookHandler(bookUC)
+	fileHandler := handler.NewFileHandler(fileUC, privateBucket, publicBucket)
 
 	// Setup server
 	s := server.New(
@@ -54,11 +69,25 @@ func main() {
 	swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
 	s.Get("/swagger/*", swagger.HandlerDefault)
 
-	s.Get("/books", bookHandler.GetBooks)
-	s.Get("/books/:id", bookHandler.GetBook)
-	s.Post("/books", bookHandler.CreateBook)
-	s.Patch("/books/:id", bookHandler.UpdateBook)
-	s.Delete("/books/:id", bookHandler.DeleteBook)
+	{
+		book := s.Group("/book")
+		{
+			book.Get("", bookHandler.GetBooks)
+			book.Get("/:id", bookHandler.GetBook)
+			book.Post("", bookHandler.CreateBook)
+			book.Patch("/:id", bookHandler.UpdateBook)
+			book.Delete("/:id", bookHandler.DeleteBook)
+		}
+	}
+	{
+		file := s.Group("/file")
+		{
+			file.Get("/", fileHandler.List)
+			file.Get("/:id", fileHandler.GetInfo)
+			file.Post("/private", fileHandler.CreatePrivateFile)
+			file.Post("/public", fileHandler.CreatePublicFile)
+		}
+	}
 
 	// Start the server
 	s.Start(ctx, stop)
