@@ -70,7 +70,7 @@ jobs:
           cache: true
           cache-dependency-path: go.sum
       - name: Test
-        run: go test -v ./..
+        run: go test -v ./...
 
   build:
     needs:
