@@ -1,4 +1,4 @@
-name: Build, Lint, Test, and Deploy
+name: Build, Lint, Test
 
 on:
   push:
@@ -26,107 +26,14 @@ jobs:
           export PATH=$PATH:$(go env GOPATH)/bin
           swag init -v3.1 -o docs -g main.go --parseDependency --parseInternal
 
-      - name: Upload Swagger Docs
-        uses: actions/upload-artifact@v4
-        with:
-          name: swagger-docs
-          path: docs/
-
-  lint:
-    needs: swagger
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download Swagger Docs
-        uses: actions/download-artifact@v4
-        with:
-          name: swagger-docs
-          path: docs/
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.24.0"
-          cache: true
-          cache-dependency-path: go.sum
-
-      - name: Clean Build Cache
-        run: go clean -cache -testcache -modcache
-
-      - name: Install Dependencies
-        run: go mod tidy
-
-      - name: Log Go Modules
-        run: go list -m all
-
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.64.5
           args: --timeout=10m
 
-  test:
-    needs: lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download Swagger Docs
-        uses: actions/download-artifact@v4
-        with:
-          name: swagger-docs
-          path: docs/
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.24.0"
-          cache: true
-          cache-dependency-path: go.sum
-
-      - name: Clean Build Cache
-        run: go clean -cache -testcache -modcache
-
-      - name: Install Dependencies
-        run: go mod tidy
-
-      - name: Debug Build
-        run: |
-          go env
-          go build -v ./...
-
       - name: Run Tests
         run: go test -v ./...
 
-  build:
-    needs:
-      - test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download Swagger Docs
-        uses: actions/download-artifact@v4
-        with:
-          name: swagger-docs
-          path: docs/
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.24.0"
-          cache: true
-          cache-dependency-path: go.sum
-
-      - name: Clean Build Cache
-        run: go clean -cache -testcache -modcache
-
-      - name: Install Dependencies
-        run: go mod tidy
-
       - name: Build
-        run: go build -o bin/server ./cmd/server/main.go
+        run: go build -o bin/server
