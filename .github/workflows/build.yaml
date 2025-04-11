@@ -33,7 +33,7 @@ jobs:
           args: --timeout=10m
 
       - name: Run Tests
-        run: go test -v ./...
+        run: go test -v ./... --ldflags="-checklinkname=0"
 
       - name: Build
         run: go build -o bin/server
