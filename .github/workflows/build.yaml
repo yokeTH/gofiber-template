@@ -36,4 +36,4 @@ jobs:
         run: go test -v ./... --ldflags="-checklinkname=0"
 
       - name: Build
-        run: go build -o bin/server
+        run: go build -o bin/server --ldflags="-checklinkname=0"
