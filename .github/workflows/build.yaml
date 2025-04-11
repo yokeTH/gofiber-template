@@ -13,7 +13,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.0"
+          go-version: "1.24.2"
           cache: true
           cache-dependency-path: go.sum
       - name: Install and Generate Swagger
@@ -41,7 +41,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.0"
+          go-version: "1.24.2"
           cache: true
           cache-dependency-path: go.sum
       - name: golangci-lint
@@ -66,11 +66,11 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.0"
+          go-version: "1.24.2"
           cache: true
           cache-dependency-path: go.sum
       - name: Test
-        run: go test -v ./...--ldflags="-checklinkname=0"
+        run: go test -v ./..
 
   build:
     needs:
@@ -86,8 +86,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: "1.24.0"
+          go-version: "1.24.2"
           cache: true
           cache-dependency-path: go.sum
       - name: Build
-        run: go build -o bin/server --ldflags="-checklinkname=0"
+        run: go build -o bin/server
