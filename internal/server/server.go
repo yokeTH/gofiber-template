@@ -7,10 +7,14 @@ import (
 
 	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/gofiber/swagger"
+	"github.com/swaggo/swag"
+	"github.com/yokeTH/gofiber-template/docs"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
 )
 
@@ -23,6 +27,8 @@ type Config struct {
 	CorsAllowMethods     string `env:"CORS_ALLOW_METHODS"`
 	CorsAllowHeaders     string `env:"CORS_ALLOW_HEADERS"`
 	CorsAllowCredentials bool   `env:"CORS_ALLOW_CREDENTIALS"`
+	SwaggerUser          string `env:"SWAGGER_USER"`
+	SwaggerPass          string `env:"SWAGGER_PASS"`
 }
 
 const defaultEnv = "unknown"
@@ -33,6 +39,8 @@ const defaultCorsAllowOrigins = "*"
 const defaultCorsAllowMethods = "GET,POST,PUT,DELETE,PATCH,OPTIONS"
 const defaultCorsAllowHeaders = "Origin,Content-Type,Accept,Authorization"
 const defaultCorsAllowCredentials = false
+const defalutSwaggerUser = "admin"
+const defalutSwaggerPass = "1234"
 
 type Server struct {
 	*fiber.App
@@ -67,6 +75,8 @@ func New(opts ...ServerOption) *Server {
 		CorsAllowMethods:     defaultCorsAllowMethods,
 		CorsAllowHeaders:     defaultCorsAllowHeaders,
 		CorsAllowCredentials: defaultCorsAllowCredentials,
+		SwaggerUser:          defalutSwaggerUser,
+		SwaggerPass:          defalutSwaggerPass,
 	}
 
 	server := &Server{
@@ -108,6 +118,18 @@ func New(opts ...ServerOption) *Server {
 			return true
 		},
 	}))
+
+	swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
+
+	fmt.Println(server.config.Env)
+
+	if server.config.Env == "dev" {
+		app.Get("/swagger/*", basicauth.New(basicauth.Config{
+			Users: map[string]string{
+				server.config.SwaggerUser: server.config.SwaggerPass,
+			},
+		}), swagger.HandlerDefault)
+	}
 
 	server.App = app
 

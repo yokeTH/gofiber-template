@@ -4,9 +4,6 @@ import (
 	"context"
 	"log"
 
-	"github.com/gofiber/swagger"
-	"github.com/swaggo/swag"
-	"github.com/yokeTH/gofiber-template/docs"
 	"github.com/yokeTH/gofiber-template/internal/adaptor/handler"
 	"github.com/yokeTH/gofiber-template/internal/adaptor/repository"
 	"github.com/yokeTH/gofiber-template/internal/config"
@@ -63,12 +60,11 @@ func main() {
 		server.WithName(config.Server.Name),
 		server.WithBodyLimitMB(config.Server.BodyLimitMB),
 		server.WithPort(config.Server.Port),
+		server.WithEnv(config.Server.Env),
+		server.WithSwaggerProtection(config.Server.SwaggerUser, config.Server.SwaggerPass),
 	)
 
 	// Setup routes
-	swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
-	s.Get("/swagger/*", swagger.HandlerDefault)
-
 	{
 		book := s.Group("/book")
 		{

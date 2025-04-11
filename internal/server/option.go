@@ -58,6 +58,14 @@ func WithEnv(env string) ServerOption {
 	}
 }
 
+// WithSwaggerProtection set the swagger basic auth username and password
+func WithSwaggerProtection(username, password string) ServerOption {
+	return func(s *Server) {
+		s.config.SwaggerUser = username
+		s.config.SwaggerPass = password
+	}
+}
+
 // WithConfig is a functional option that sets a custom configuration for the server.
 // It takes a pointer to a Config struct and applies it to the server's configuration.
 //
