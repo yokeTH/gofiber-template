@@ -121,8 +121,6 @@ func New(opts ...ServerOption) *Server {
 
 	swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
 
-	fmt.Println(server.config.Env)
-
 	if server.config.Env == "dev" {
 		app.Get("/swagger/*", basicauth.New(basicauth.Config{
 			Users: map[string]string{
