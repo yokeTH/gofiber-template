@@ -2,7 +2,10 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"io"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -16,18 +19,37 @@ type Config struct {
 	AccessKeyID     string `env:"ACCESS_KEY_ID,required"`
 	AccessKeySecret string `env:"ACCESS_KEY_SECRET,required"`
 	Endpoint        string `env:"ENDPOINT,required"`
+	UrlPathStyle    bool   `env:"URL_PATH_STYLE" default:"false"`
 }
 
 type storage struct {
 	presignClient *s3.PresignClient
 	client        *s3.Client
 	config        Config
+	hostname      string
+}
+
+func appendSubdomain(baseURL, subdomain string) (string, error) {
+	parsedURL, err := url.Parse(baseURL)
+	if err != nil {
+		return "", err
+	}
+
+	hostParts := strings.Split(parsedURL.Host, ".")
+	if len(hostParts) < 2 {
+		return "", fmt.Errorf("invalid base URL: %s", baseURL)
+	}
+
+	newHost := fmt.Sprintf("%s.%s", subdomain, parsedURL.Host)
+	parsedURL.Host = newHost
+
+	return parsedURL.String(), nil
 }
 
 type Storage interface {
 	UploadFile(ctx context.Context, key string, contentType string, file io.Reader) error
 	GetSignedUrl(ctx context.Context, key string, expires time.Duration) (string, error)
-	GetPublicUrl(key string) string
+	GetPublicUrl(key string) (string, error)
 	DeleteFile(ctx context.Context, key string) error
 }
 
@@ -44,10 +66,17 @@ func New(sConfig Config) (*storage, error) {
 
 	client := s3.NewFromConfig(cfg)
 	presignClient := s3.NewPresignClient(client)
+
+	newURL, err := appendSubdomain(sConfig.Endpoint, sConfig.BucketName)
+	if err != nil {
+		return nil, err
+	}
+
 	st := &storage{
 		client:        client,
 		presignClient: presignClient,
 		config:        sConfig,
+		hostname:      newURL,
 	}
 
 	return st, nil
@@ -77,8 +106,12 @@ func (s *storage) GetSignedUrl(ctx context.Context, key string, expires time.Dur
 	return req.URL, nil
 }
 
-func (s *storage) GetPublicUrl(key string) string {
-	return s.config.Endpoint + "/" + s.config.BucketName + "/" + key
+func (s *storage) GetPublicUrl(key string) (string, error) {
+	fmt.Println(s.config.UrlPathStyle)
+	if s.config.UrlPathStyle {
+		return url.JoinPath(s.config.Endpoint, s.config.BucketName, key)
+	}
+	return url.JoinPath(s.hostname, key)
 }
 
 func (s *storage) DeleteFile(ctx context.Context, key string) error {

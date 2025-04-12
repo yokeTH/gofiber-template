@@ -49,7 +49,6 @@ func (u *fileUseCase) getStorage(bucketType domain.BucketType) storage.Storage {
 }
 
 func (u *fileUseCase) create(ctx context.Context, file *multipart.FileHeader, bucketType domain.BucketType) (*domain.File, error) {
-	fmt.Println("this")
 	fileData, err := file.Open()
 	if err != nil {
 		return nil, apperror.InternalServerError(err, "error opening file")
