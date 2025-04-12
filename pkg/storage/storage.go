@@ -19,6 +19,7 @@ type Config struct {
 	AccessKeyID     string `env:"ACCESS_KEY_ID,required"`
 	AccessKeySecret string `env:"ACCESS_KEY_SECRET,required"`
 	Endpoint        string `env:"ENDPOINT,required"`
+	UrlPathStyle    bool   `env:"URL_PATH_STYLE" default:"false"`
 }
 
 type storage struct {
@@ -106,6 +107,10 @@ func (s *storage) GetSignedUrl(ctx context.Context, key string, expires time.Dur
 }
 
 func (s *storage) GetPublicUrl(key string) (string, error) {
+	fmt.Println(s.config.UrlPathStyle)
+	if s.config.UrlPathStyle {
+		return url.JoinPath(s.config.Endpoint, s.config.BucketName, key)
+	}
 	return url.JoinPath(s.hostname, key)
 }
 
