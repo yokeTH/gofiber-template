@@ -9,7 +9,7 @@ type bookUseCase struct {
 	bookRepo BookRepository
 }
 
-func NewBookUseCase(bookRepo BookRepository) BookUseCase {
+func NewBookUseCase(bookRepo BookRepository) *bookUseCase {
 	return &bookUseCase{
 		bookRepo: bookRepo,
 	}
