@@ -17,7 +17,10 @@ type AppError struct {
 }
 
 func (e *AppError) Error() string {
-	return fmt.Sprintf("%s\nError: %v \nStack:\n%s", e.Message, e.Err, e.Stack)
+	if e.Code/100 == 5 {
+		return fmt.Sprintf("%s\nInternal Error: %v \nStack:\n%s", e.Message, e.Err, e.Stack)
+	}
+	return fmt.Sprintf("%s - Internal Error: %v", e.Message, e.Err)
 }
 
 func IsAppError(err error) bool {
@@ -91,22 +94,21 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 	if IsAppError(err) {
 		e := err.(*AppError)
 		if err := c.Status(e.Code).JSON(fiber.Map{"error": e.Message}); err != nil {
-			// if can't send error
+			// if can't send error -- it should not be able
 			return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 		}
 		return nil
 	}
 
-	code := fiber.StatusInternalServerError
 	var e *fiber.Error
 	if errors.As(err, &e) {
-		code = e.Code
+		if err := c.Status(e.Code).SendString(e.Error()); err != nil {
+			// if can't send error -- it should not be able
+			return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
+		}
+		return nil
 	}
 
-	if err := c.Status(code).JSON(fiber.Map{"error": e.Message}); err != nil {
-		// if can't send error
-		return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
-	}
-
-	return nil
+	// other case return error that is not fiber error or app error
+	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
 }
