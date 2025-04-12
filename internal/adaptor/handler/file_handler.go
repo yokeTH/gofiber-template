@@ -43,7 +43,10 @@ func (h *fileHandler) CreatePrivateFile(c *fiber.Ctx) error {
 		return err
 	}
 
-	response := h.dto.ToResponse(*fileData)
+	response, err := h.dto.ToResponse(*fileData)
+	if err != nil {
+		return err
+	}
 
 	return c.Status(201).JSON(dto.Success(response))
 }
@@ -71,7 +74,10 @@ func (h *fileHandler) CreatePublicFile(c *fiber.Ctx) error {
 		return err
 	}
 
-	response := h.dto.ToResponse(*fileData)
+	response, err := h.dto.ToResponse(*fileData)
+	if err != nil {
+		return err
+	}
 
 	return c.Status(201).JSON(dto.Success(response))
 }
@@ -95,9 +101,12 @@ func (h *fileHandler) List(c *fiber.Ctx) error {
 		return err
 	}
 
-	response := h.dto.ToResponseList(files)
+	response, err := h.dto.ToResponseList(files)
+	if err != nil {
+		return err
+	}
 
-	return c.Status(200).JSON(dto.SuccessPagination(response, page, last, limit, total))
+	return c.Status(200).JSON(dto.SuccessPagination(*response, page, last, limit, total))
 }
 
 // GetFile godoc
@@ -122,7 +131,10 @@ func (h *fileHandler) GetInfo(c *fiber.Ctx) error {
 		return err
 	}
 
-	response := h.dto.ToResponse(*file)
+	response, err := h.dto.ToResponse(*file)
+	if err != nil {
+		return err
+	}
 
 	return c.Status(200).JSON(dto.Success(response))
 }
