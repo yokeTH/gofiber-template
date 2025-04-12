@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/yokeTH/gofiber-template/internal/adaptor/handler"
 	"github.com/yokeTH/gofiber-template/internal/adaptor/repository"
@@ -22,7 +25,7 @@ import (
 // @name Authorization
 // @description Bearer token authentication
 func main() {
-	ctx, stop := context.WithCancel(context.Background())
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
 	config := config.Load()
