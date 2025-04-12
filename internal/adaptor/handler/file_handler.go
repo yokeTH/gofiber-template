@@ -59,7 +59,7 @@ func (h *fileHandler) CreatePrivateFile(c *fiber.Ctx) error {
 //	@success 		201	{object}	dto.SuccessResponse[dto.FileResponse]	"Created"
 //	@failure		400	{object}	dto.ErrorResponse	"Bad Request"
 //	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
-//	@Router /files/private [post]
+//	@Router /files/public [post]
 func (h *fileHandler) CreatePublicFile(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -110,7 +110,7 @@ func (h *fileHandler) List(c *fiber.Ctx) error {
 //	@success 		200	{object}	dto.SuccessResponse[dto.FileResponse]	"OK"
 //	@failure		400	{object}	dto.ErrorResponse	"Bad Request"
 //	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
-//	@Router /books/{id} [get]
+//	@Router /files/{id} [get]
 func (h *fileHandler) GetInfo(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {

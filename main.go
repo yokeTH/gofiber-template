@@ -66,7 +66,7 @@ func main() {
 
 	// Setup routes
 	{
-		book := s.Group("/book")
+		book := s.Group("/books")
 		{
 			book.Get("", bookHandler.GetBooks)
 			book.Get("/:id", bookHandler.GetBook)
@@ -76,7 +76,7 @@ func main() {
 		}
 	}
 	{
-		file := s.Group("/file")
+		file := s.Group("/files")
 		{
 			file.Get("/", fileHandler.List)
 			file.Get("/:id", fileHandler.GetInfo)
