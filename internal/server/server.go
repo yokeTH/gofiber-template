@@ -4,15 +4,17 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 
+	"github.com/MarceloPetrucio/go-scalar-api-reference"
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/gofiber/swagger"
 	"github.com/swaggo/swag"
 	"github.com/yokeTH/gofiber-template/docs"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
@@ -119,14 +121,23 @@ func New(opts ...ServerOption) *Server {
 		},
 	}))
 
-	swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
-
 	if server.config.Env == "dev" {
+		swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
 		app.Get("/swagger/*", basicauth.New(basicauth.Config{
 			Users: map[string]string{
 				server.config.SwaggerUser: server.config.SwaggerPass,
 			},
-		}), swagger.HandlerDefault)
+		}), adaptor.HTTPHandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			htmlContent, err := scalar.ApiReferenceHTML(&scalar.Options{
+				SpecURL: "./docs/swagger.json",
+			})
+
+			if err != nil {
+				fmt.Printf("%v", err)
+			}
+
+			fmt.Fprintln(w, htmlContent)
+		}))
 	}
 
 	server.App = app
