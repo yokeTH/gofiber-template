@@ -12,10 +12,10 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/gofiber/swagger"
 	"github.com/swaggo/swag"
 	"github.com/yokeTH/gofiber-template/docs"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
+	"github.com/yokeTH/gofiber-template/pkg/swagger"
 )
 
 type Config struct {
@@ -119,14 +119,13 @@ func New(opts ...ServerOption) *Server {
 		},
 	}))
 
-	swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
-
 	if server.config.Env == "dev" {
+		swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
 		app.Get("/swagger/*", basicauth.New(basicauth.Config{
 			Users: map[string]string{
 				server.config.SwaggerUser: server.config.SwaggerPass,
 			},
-		}), swagger.HandlerDefault)
+		}), swagger.Handler)
 	}
 
 	server.App = app
