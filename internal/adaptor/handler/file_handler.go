@@ -25,7 +25,7 @@ func NewFileHandler(uc file.FileUseCase, private storage.Storage, public storage
 //	@summary		CreateFile
 //	@description	create private file by upload file multipart-form field name file
 //	@tags			file
-//	@accept			x-www-form-urlencoded
+//	@accept			multipart/form-data
 //	@produce 		json
 //	@param			file	formData 	file	true "file data"
 //	@success 		201	{object}	dto.SuccessResponse[dto.FileResponse]	"Created"
@@ -33,6 +33,7 @@ func NewFileHandler(uc file.FileUseCase, private storage.Storage, public storage
 //	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /files/private [post]
 func (h *fileHandler) CreatePrivateFile(c *fiber.Ctx) error {
+	// Log headers in a safe way
 	file, err := c.FormFile("file")
 	if err != nil {
 		return apperror.BadRequestError(err, "invalid file")
