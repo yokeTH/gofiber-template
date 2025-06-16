@@ -25,12 +25,12 @@ func NewFileUseCase(fileRepo FileRepository, pub, pri storage.Storage) *fileUseC
 	}
 }
 
-func (u *fileUseCase) List(limit, page int) ([]domain.File, int, int, error) {
-	return u.fileRepo.List(limit, page)
+func (u *fileUseCase) List(c context.Context, limit, page int) ([]domain.File, int, int, error) {
+	return u.fileRepo.List(c, limit, page)
 }
 
-func (u *fileUseCase) GetByID(id int) (*domain.File, error) {
-	return u.fileRepo.GetByID(id)
+func (u *fileUseCase) GetByID(c context.Context, id int) (*domain.File, error) {
+	return u.fileRepo.GetByID(c, id)
 }
 
 func (u *fileUseCase) CreatePrivateFile(ctx context.Context, file *multipart.FileHeader) (*domain.File, error) {
@@ -41,7 +41,7 @@ func (u *fileUseCase) CreatePublicFile(ctx context.Context, file *multipart.File
 	return u.create(ctx, file, domain.PublicBucketType)
 }
 
-func (u *fileUseCase) getStorage(bucketType domain.BucketType) storage.Storage {
+func (u *fileUseCase) getStorage(c context.Context, bucketType domain.BucketType) storage.Storage {
 	if bucketType == domain.PublicBucketType {
 		return u.pubStorage
 	}
@@ -67,11 +67,11 @@ func (u *fileUseCase) create(ctx context.Context, file *multipart.FileHeader, bu
 		BucketType: bucketType,
 	}
 
-	if err = u.getStorage(bucketType).UploadFile(ctx, fileKey, contentType, fileData); err != nil {
+	if err = u.getStorage(ctx, bucketType).UploadFile(ctx, fileKey, contentType, fileData); err != nil {
 		return nil, apperror.InternalServerError(err, "error uploading file")
 	}
 
-	if err = u.fileRepo.Create(fileInfo); err != nil {
+	if err = u.fileRepo.Create(ctx, fileInfo); err != nil {
 		return nil, apperror.InternalServerError(err, "error create file data")
 	}
 

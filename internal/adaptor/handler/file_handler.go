@@ -43,7 +43,7 @@ func (h *fileHandler) CreatePrivateFile(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "invalid file")
 	}
 
-	fileData, err := h.fileUseCase.CreatePrivateFile(c.Context(), file)
+	fileData, err := h.fileUseCase.CreatePrivateFile(c.UserContext(), file)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func (h *fileHandler) CreatePublicFile(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "invalid file")
 	}
 
-	fileData, err := h.fileUseCase.CreatePublicFile(c.Context(), file)
+	fileData, err := h.fileUseCase.CreatePublicFile(c.UserContext(), file)
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (h *fileHandler) List(c *fiber.Ctx) error {
 	defer logger.Func(c.UserContext(), "fileHandler.List", true)
 
 	page, limit := extractPaginationControl(c)
-	files, last, total, err := h.fileUseCase.List(limit, page)
+	files, last, total, err := h.fileUseCase.List(c.UserContext(), limit, page)
 	if err != nil {
 		return err
 	}
@@ -140,7 +140,7 @@ func (h *fileHandler) GetInfo(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "invalid id")
 	}
 
-	file, err := h.fileUseCase.GetByID(id)
+	file, err := h.fileUseCase.GetByID(c.UserContext(), id)
 	if err != nil {
 		return err
 	}

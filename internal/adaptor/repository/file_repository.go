@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"errors"
 
 	"github.com/yokeTH/gofiber-template/internal/domain"
@@ -19,14 +20,14 @@ func NewFileRepository(db *gorm.DB) *fileRepository {
 	}
 }
 
-func (r *fileRepository) Create(book *domain.File) error {
+func (r *fileRepository) Create(c context.Context, book *domain.File) error {
 	if err := r.db.Create(book).Error; err != nil {
 		return apperror.InternalServerError(err, "failed to create book")
 	}
 	return nil
 }
 
-func (r *fileRepository) List(limit, page int) ([]domain.File, int, int, error) {
+func (r *fileRepository) List(c context.Context, limit, page int) ([]domain.File, int, int, error) {
 	var files []domain.File
 	var total, last int
 
@@ -39,7 +40,7 @@ func (r *fileRepository) List(limit, page int) ([]domain.File, int, int, error) 
 	return files, last, total, nil
 }
 
-func (r *fileRepository) GetByID(id int) (*domain.File, error) {
+func (r *fileRepository) GetByID(c context.Context, id int) (*domain.File, error) {
 	file := &domain.File{}
 	if err := r.db.First(file, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

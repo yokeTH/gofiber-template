@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"errors"
 
 	"github.com/yokeTH/gofiber-template/internal/adaptor/dto"
@@ -20,14 +21,14 @@ func NewBookRepository(db *gorm.DB) *bookRepository {
 	}
 }
 
-func (r *bookRepository) Create(book *domain.Book) error {
+func (r *bookRepository) Create(c context.Context, book *domain.Book) error {
 	if err := r.db.Create(book).Error; err != nil {
 		return apperror.InternalServerError(err, "failed to create book")
 	}
 	return nil
 }
 
-func (r *bookRepository) GetByID(id int) (*domain.Book, error) {
+func (r *bookRepository) GetByID(c context.Context, id int) (*domain.Book, error) {
 	book := &domain.Book{}
 	if err := r.db.First(book, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -38,7 +39,7 @@ func (r *bookRepository) GetByID(id int) (*domain.Book, error) {
 	return book, nil
 }
 
-func (r *bookRepository) List(limit, page int) ([]domain.Book, int, int, error) {
+func (r *bookRepository) List(c context.Context, limit, page int) ([]domain.Book, int, int, error) {
 	var books []domain.Book
 	var total, last int
 
@@ -51,7 +52,7 @@ func (r *bookRepository) List(limit, page int) ([]domain.Book, int, int, error) 
 	return books, last, total, nil
 }
 
-func (r *bookRepository) Update(id int, updateRequest *dto.UpdateBookRequest) (*domain.Book, error) {
+func (r *bookRepository) Update(c context.Context, id int, updateRequest *dto.UpdateBookRequest) (*domain.Book, error) {
 	var book domain.Book
 	if err := r.db.First(&book, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -67,7 +68,7 @@ func (r *bookRepository) Update(id int, updateRequest *dto.UpdateBookRequest) (*
 	return &book, nil
 }
 
-func (r *bookRepository) Delete(id int) error {
+func (r *bookRepository) Delete(c context.Context, id int) error {
 	if err := r.db.Delete(&domain.Book{}, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return apperror.NotFoundError(err, "book not found")

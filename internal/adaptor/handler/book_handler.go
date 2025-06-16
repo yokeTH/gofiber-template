@@ -50,7 +50,7 @@ func (h *bookHandler) CreateBook(c *fiber.Ctx) error {
 		Title:  body.Title,
 	}
 
-	if err := h.bookUseCase.Create(book); err != nil {
+	if err := h.bookUseCase.Create(c.UserContext(), book); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
@@ -81,7 +81,7 @@ func (h *bookHandler) GetBook(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "id must be an integer")
 	}
 
-	book, err := h.bookUseCase.GetByID(id)
+	book, err := h.bookUseCase.GetByID(c.UserContext(), id)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -115,7 +115,7 @@ func (h *bookHandler) GetBooks(c *fiber.Ctx) error {
 	}
 	page := c.QueryInt("page", 1)
 
-	books, totalPage, totalRows, err := h.bookUseCase.List(limit, page)
+	books, totalPage, totalRows, err := h.bookUseCase.List(c.UserContext(), limit, page)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -153,7 +153,7 @@ func (h *bookHandler) UpdateBook(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, err.Error())
 	}
 
-	book, err := h.bookUseCase.Update(id, body)
+	book, err := h.bookUseCase.Update(c.UserContext(), id, body)
 	if err != nil {
 		if apperror.IsAppError(err) {
 			return err
@@ -182,7 +182,7 @@ func (h *bookHandler) DeleteBook(c *fiber.Ctx) error {
 		return apperror.BadRequestError(err, "id must be an integer")
 	}
 
-	if err := h.bookUseCase.Delete(id); err != nil {
+	if err := h.bookUseCase.Delete(c.UserContext(), id); err != nil {
 		if apperror.IsAppError(err) {
 			return err
 		}
