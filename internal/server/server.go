@@ -117,7 +117,7 @@ func New(opts ...ServerOption) *Server {
 
 	if server.config.Env == "dev" {
 		swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
-		app.Use(basicauth.New(basicauth.Config{
+		app.Get("/docs/*", basicauth.New(basicauth.Config{
 			Users: map[string]string{
 				server.config.SwaggerUser: server.config.SwaggerPass,
 			},
