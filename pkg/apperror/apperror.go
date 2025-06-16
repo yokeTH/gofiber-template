@@ -18,9 +18,9 @@ type AppError struct {
 
 func (e *AppError) Error() string {
 	if e.Code/100 == 5 {
-		return fmt.Sprintf("%s\nInternal Error: %v \nStack:\n%s", e.Message, e.Err, e.Stack)
+		return fmt.Sprintf("Message:%s\nInternal Error: %v \nStack:\n%s", e.Message, e.Err, e.Stack)
 	}
-	return fmt.Sprintf("%s - Internal Error: %v", e.Message, e.Err)
+	return fmt.Sprintf("Message: %s | Internal Error: %v", e.Message, e.Err)
 }
 
 func IsAppError(err error) bool {
@@ -40,7 +40,7 @@ func New(code int, message string, err error) *AppError {
 
 // modified https://github.com/pkg/errors/blob/5dd12d0cfe7f152f80558d591504ce685299311e/stack.go
 func captureStack() string {
-	const depth = 32
+	const depth = 16
 	var pcs [depth]uintptr
 
 	// skip 4 frames apperror.captureStack x2, apperror.New, apperror.InternalServerError or another
@@ -102,7 +102,7 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 
 	var e *fiber.Error
 	if errors.As(err, &e) {
-		if err := c.Status(e.Code).SendString(e.Error()); err != nil {
+		if err := c.Status(e.Code).JSON(fiber.Map{"error": e.Error()}); err != nil {
 			// if can't send error -- it should not be able
 			return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
 		}

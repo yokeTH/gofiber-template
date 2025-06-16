@@ -5,6 +5,7 @@ import (
 	"github.com/yokeTH/gofiber-template/internal/adaptor/dto"
 	"github.com/yokeTH/gofiber-template/internal/usecase/file"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
+	"github.com/yokeTH/gofiber-template/pkg/logger"
 	"github.com/yokeTH/gofiber-template/pkg/storage"
 )
 
@@ -33,13 +34,16 @@ func NewFileHandler(uc file.FileUseCase, private storage.Storage, public storage
 //	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /files/private [post]
 func (h *fileHandler) CreatePrivateFile(c *fiber.Ctx) error {
+	logger.Func(c.UserContext(), "fileHandler.CreatePrivateFile")
+	defer logger.Func(c.UserContext(), "fileHandler.CreatePrivateFile", true)
+
 	// Log headers in a safe way
 	file, err := c.FormFile("file")
 	if err != nil {
 		return apperror.BadRequestError(err, "invalid file")
 	}
 
-	fileData, err := h.fileUseCase.CreatePrivateFile(c.Context(), file)
+	fileData, err := h.fileUseCase.CreatePrivateFile(c.UserContext(), file)
 	if err != nil {
 		return err
 	}
@@ -65,12 +69,15 @@ func (h *fileHandler) CreatePrivateFile(c *fiber.Ctx) error {
 //	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /files/public [post]
 func (h *fileHandler) CreatePublicFile(c *fiber.Ctx) error {
+	logger.Func(c.UserContext(), "fileHandler.CreatePublicFile")
+	defer logger.Func(c.UserContext(), "fileHandler.CreatePublicFile", true)
+
 	file, err := c.FormFile("file")
 	if err != nil {
 		return apperror.BadRequestError(err, "invalid file")
 	}
 
-	fileData, err := h.fileUseCase.CreatePublicFile(c.Context(), file)
+	fileData, err := h.fileUseCase.CreatePublicFile(c.UserContext(), file)
 	if err != nil {
 		return err
 	}
@@ -96,8 +103,11 @@ func (h *fileHandler) CreatePublicFile(c *fiber.Ctx) error {
 //	@response		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /files [get]
 func (h *fileHandler) List(c *fiber.Ctx) error {
+	logger.Func(c.UserContext(), "fileHandler.List")
+	defer logger.Func(c.UserContext(), "fileHandler.List", true)
+
 	page, limit := extractPaginationControl(c)
-	files, last, total, err := h.fileUseCase.List(limit, page)
+	files, last, total, err := h.fileUseCase.List(c.UserContext(), limit, page)
 	if err != nil {
 		return err
 	}
@@ -122,12 +132,15 @@ func (h *fileHandler) List(c *fiber.Ctx) error {
 //	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /files/{id} [get]
 func (h *fileHandler) GetInfo(c *fiber.Ctx) error {
+	logger.Func(c.UserContext(), "fileHandler.GetInfo")
+	defer logger.Func(c.UserContext(), "fileHandler.GetInfo", true)
+
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return apperror.BadRequestError(err, "invalid id")
 	}
 
-	file, err := h.fileUseCase.GetByID(id)
+	file, err := h.fileUseCase.GetByID(c.UserContext(), id)
 	if err != nil {
 		return err
 	}

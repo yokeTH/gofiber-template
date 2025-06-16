@@ -9,13 +9,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
-	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/swaggo/swag"
+	"github.com/yokeTH/gofiber-scalar/scalar"
 	"github.com/yokeTH/gofiber-template/docs"
+	"github.com/yokeTH/gofiber-template/internal/adaptor/middleware"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
-	"github.com/yokeTH/gofiber-template/pkg/swagger"
 )
 
 type Config struct {
@@ -98,12 +98,8 @@ func New(opts ...ServerOption) *Server {
 	})
 
 	app.Use(requestid.New())
-
-	app.Use(logger.New(logger.Config{
-		DisableColors: true,
-		TimeFormat:    "2006-01-02 15:04:05",
-		Format:        "${time} | ${locals:requestid} | ${status} | ${latency} | ${ip} | ${method} | ${path} | ${error}\n",
-	}))
+	app.Use(middleware.CtxRequestIDInjector())
+	app.Use(middleware.RequestLogger())
 
 	app.Use(recover.New(recover.Config{
 		EnableStackTrace: true,
@@ -121,11 +117,11 @@ func New(opts ...ServerOption) *Server {
 
 	if server.config.Env == "dev" {
 		swag.Register(docs.SwaggerInfo.InstanceName(), docs.SwaggerInfo)
-		app.Get("/swagger/*", basicauth.New(basicauth.Config{
+		app.Get("/docs/*", basicauth.New(basicauth.Config{
 			Users: map[string]string{
 				server.config.SwaggerUser: server.config.SwaggerPass,
 			},
-		}), swagger.Handler)
+		}), scalar.New())
 	}
 
 	server.App = app

@@ -8,14 +8,14 @@ import (
 )
 
 type FileRepository interface {
-	Create(file *domain.File) error
-	List(limit, page int) ([]domain.File, int, int, error)
-	GetByID(id int) (*domain.File, error)
+	Create(c context.Context, file *domain.File) error
+	List(c context.Context, limit, page int) ([]domain.File, int, int, error)
+	GetByID(c context.Context, id int) (*domain.File, error)
 }
 
 type FileUseCase interface {
 	CreatePrivateFile(ctx context.Context, file *multipart.FileHeader) (*domain.File, error)
 	CreatePublicFile(ctx context.Context, file *multipart.FileHeader) (*domain.File, error)
-	List(limit, page int) ([]domain.File, int, int, error)
-	GetByID(id int) (*domain.File, error)
+	List(c context.Context, limit, page int) ([]domain.File, int, int, error)
+	GetByID(c context.Context, id int) (*domain.File, error)
 }
