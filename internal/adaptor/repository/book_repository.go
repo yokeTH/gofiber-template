@@ -8,6 +8,7 @@ import (
 	"github.com/yokeTH/gofiber-template/internal/domain"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
 	"github.com/yokeTH/gofiber-template/pkg/db"
+	"github.com/yokeTH/gofiber-template/pkg/logger"
 	"gorm.io/gorm"
 )
 
@@ -22,6 +23,8 @@ func NewBookRepository(db *gorm.DB) *bookRepository {
 }
 
 func (r *bookRepository) Create(c context.Context, book *domain.Book) error {
+	logger.Func(c, "bookRepository.Create")
+	defer logger.Func(c, "bookRepository.Create", true)
 	if err := r.db.Create(book).Error; err != nil {
 		return apperror.InternalServerError(err, "failed to create book")
 	}
@@ -29,6 +32,9 @@ func (r *bookRepository) Create(c context.Context, book *domain.Book) error {
 }
 
 func (r *bookRepository) GetByID(c context.Context, id int) (*domain.Book, error) {
+	logger.Func(c, "bookRepository.GetByID")
+	defer logger.Func(c, "bookRepository.GetByID", true)
+
 	book := &domain.Book{}
 	if err := r.db.First(book, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -40,6 +46,9 @@ func (r *bookRepository) GetByID(c context.Context, id int) (*domain.Book, error
 }
 
 func (r *bookRepository) List(c context.Context, limit, page int) ([]domain.Book, int, int, error) {
+	logger.Func(c, "bookRepository.List")
+	defer logger.Func(c, "bookRepository.List", true)
+
 	var books []domain.Book
 	var total, last int
 
@@ -53,6 +62,9 @@ func (r *bookRepository) List(c context.Context, limit, page int) ([]domain.Book
 }
 
 func (r *bookRepository) Update(c context.Context, id int, updateRequest *dto.UpdateBookRequest) (*domain.Book, error) {
+	logger.Func(c, "bookRepository.Update")
+	defer logger.Func(c, "bookRepository.Update", true)
+
 	var book domain.Book
 	if err := r.db.First(&book, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -69,6 +81,9 @@ func (r *bookRepository) Update(c context.Context, id int, updateRequest *dto.Up
 }
 
 func (r *bookRepository) Delete(c context.Context, id int) error {
+	logger.Func(c, "bookRepository.Delete")
+	defer logger.Func(c, "bookRepository.Delete", true)
+
 	if err := r.db.Delete(&domain.Book{}, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return apperror.NotFoundError(err, "book not found")
