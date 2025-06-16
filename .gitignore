@@ -27,7 +27,10 @@ go.work.sum
 
 # bin
 bin/
+result/
 
 .DS_Store
 .commitlint/
 docs/
+
+.direnv
