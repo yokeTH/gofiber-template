@@ -27,7 +27,7 @@ go.work.sum
 
 # bin
 bin/
-result/
+result
 
 .DS_Store
 .commitlint/
