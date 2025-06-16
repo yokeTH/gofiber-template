@@ -8,6 +8,7 @@ import (
 	"github.com/yokeTH/gofiber-template/internal/domain"
 	"github.com/yokeTH/gofiber-template/internal/usecase/book"
 	"github.com/yokeTH/gofiber-template/pkg/apperror"
+	"github.com/yokeTH/gofiber-template/pkg/logger"
 )
 
 type bookHandler struct {
@@ -36,6 +37,9 @@ func NewBookHandler(bookUseCase book.BookUseCase) *bookHandler {
 //
 // @Router /books [post]
 func (h *bookHandler) CreateBook(c *fiber.Ctx) error {
+	logger.Func(c.UserContext(), "bookHandler.CreateBook")
+	defer logger.Func(c.UserContext(), "bookHandler.CreateBook", true)
+
 	body := new(dto.CreateBookRequest)
 	if err := c.BodyParser(body); err != nil {
 		return apperror.BadRequestError(err, err.Error())
@@ -69,6 +73,9 @@ func (h *bookHandler) CreateBook(c *fiber.Ctx) error {
 //	@failure 		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /books/{id} [get]
 func (h *bookHandler) GetBook(c *fiber.Ctx) error {
+	logger.Func(c.UserContext(), "bookHandler.GetBook")
+	defer logger.Func(c.UserContext(), "bookHandler.GetBook", true)
+
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return apperror.BadRequestError(err, "id must be an integer")
@@ -99,6 +106,9 @@ func (h *bookHandler) GetBook(c *fiber.Ctx) error {
 //	@response		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /books [get]
 func (h *bookHandler) GetBooks(c *fiber.Ctx) error {
+	logger.Func(c.UserContext(), "bookHandler.GetBooks")
+	defer logger.Func(c.UserContext(), "bookHandler.GetBooks", true)
+
 	limit := c.QueryInt("limit", 10)
 	if limit > 50 {
 		return apperror.BadRequestError(errors.New("limit cannot exceed 50"), "limit cannot exceed 50")
@@ -130,6 +140,9 @@ func (h *bookHandler) GetBooks(c *fiber.Ctx) error {
 //	@response		500	{object}	dto.ErrorResponse	"Internal Server Error"
 //	@Router /books/{id} [patch]
 func (h *bookHandler) UpdateBook(c *fiber.Ctx) error {
+	logger.Func(c.UserContext(), "bookHandler.UpdateBook")
+	defer logger.Func(c.UserContext(), "bookHandler.UpdateBook", true)
+
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return apperror.BadRequestError(err, "id must be an integer")
