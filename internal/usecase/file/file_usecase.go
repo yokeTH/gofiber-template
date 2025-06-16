@@ -53,7 +53,9 @@ func (u *fileUseCase) create(ctx context.Context, file *multipart.FileHeader, bu
 	if err != nil {
 		return nil, apperror.InternalServerError(err, "error opening file")
 	}
-	defer fileData.Close()
+	defer func() {
+		_ = fileData.Close()
+	}()
 
 	filename := strings.ReplaceAll(file.Filename, " ", "-")
 	contentType := file.Header.Get("Content-Type")

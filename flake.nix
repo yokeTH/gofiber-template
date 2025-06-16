@@ -62,6 +62,7 @@
             go_1_24
             swag
             air
+            golangci-lint
           ];
 
           shellHook = ''
