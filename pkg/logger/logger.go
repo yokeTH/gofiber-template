@@ -58,7 +58,7 @@ func createLogger() zerolog.Logger {
 		logger = zerolog.New(zerolog.ConsoleWriter{
 			Out: os.Stdout,
 		}).
-			Level(zerolog.TraceLevel).
+			Level(parseLogLevel(logLevel)).
 			With().
 			Timestamp().
 			Logger()
