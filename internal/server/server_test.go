@@ -29,7 +29,7 @@ func TestServer(t *testing.T) {
 			route:         "/not-found",
 			expectedError: false,
 			expectedCode:  404,
-			expectedBody:  `Cannot GET /not-found`,
+			expectedBody:  `{"error":"Cannot GET /not-found"}`,
 		},
 	}
 
